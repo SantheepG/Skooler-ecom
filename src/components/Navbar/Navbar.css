@@ -1,0 +1,166 @@
+:root {
+  --currency-symbol: "$"; 
+}
+/* nav item animations */
+.cl-effect-5 a {
+    position: relative;
+    display: inline-block;
+    margin: 5px 15px;
+    outline: none;
+    color: #817e7e;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 100;
+    text-shadow: 0 0 1px rgba(255, 255, 255, 0.3);
+    font-size: 1rem;
+  }
+  
+  nav a:hover,
+  nav a:focus {
+    outline: none;
+  }
+  
+  .cl-effect-5 a {
+    
+    overflow: hidden;
+    padding: 0 4px;
+  }
+  
+  .cl-effect-5 a span {
+    
+    position: relative;
+    display: inline-block;
+    -webkit-transition: -webkit-transform 0.3s;
+    -moz-transition: -moz-transform 0.3s;
+    transition: transform 0.3s;
+  }
+  
+  .cl-effect-5 a span::before {
+    
+    position: absolute;
+    top: 100%;
+    content: attr(data-hover);
+    font-weight: 300;
+    -webkit-transform: translate3d(0, 0, 0);
+    -moz-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+  
+  .cl-effect-5 a:hover span,
+  .cl-effect-5 a:focus span {
+    
+    -webkit-transform: translateY(-100%);
+    -moz-transform: translateY(-100%);
+    transform: translateY(-100%);
+  }
+  .searchbar-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .active_nav {
+    font-weight: 800;
+    border-bottom: solid 2px rgb(248, 216, 130);
+    
+    color: rgb(255, 200, 20);
+  }
+
+
+  .searchbar {
+      float: right;
+      background-color: rgb(243, 242, 242);
+      color: rgb(46, 38, 38);
+      padding: 6px 10px;
+      width: 200px;
+      border: none;
+      margin-top: 1px;
+      margin-right: 8px;
+      font-family: "Segoe UI Light","Segoe UI","Segoe",Tahoma,Helvetica,Arial,sans-serif;
+      font-size: 1em;
+      font-weight: bold;
+      border-left: rgb(228, 223, 223) solid 1px;
+      border-right: rgb(228, 223, 223) solid 1px;
+      transition: 0.3s;
+      border-radius: 15px;
+  }
+  
+  .searchbar::placeholder {
+      color: rgb(139, 135, 135);
+      font-family: "Segoe UI Light","Segoe UI","Segoe",Tahoma,Helvetica,Arial,sans-serif;
+      font-size: 1em;
+      font-weight: bold;
+      /* transition: 0.2s; */
+  }
+  
+  .searchbar:focus {
+      width: 300px;
+      font-family: "Segoe UI Light","Segoe UI","Segoe",Tahoma,Helvetica,Arial,sans-serif;
+      font-size: 1em;
+      font-weight: bold;
+      transition: 0.3s;
+      overflow-x: auto;
+  }
+  
+  .btn-search {
+      cursor: pointer;
+      color: rgb(107, 101, 101);
+      text-decoration: none !important;
+      font-family: "Segoe UI Light","Segoe UI","Segoe",Tahoma,Helvetica,Arial,sans-serif;
+      font-size: 1.5em;
+      padding-top: 5px;
+      margin-right: 20px;
+      animation: slideInFromLeft 2s ease forwards; /* Adjust timing and easing as needed */
+  }
+  
+  .btn-search i:hover{
+    color: rgb(63, 95, 253);
+    
+  }
+  
+  .visible {
+    visibility: visible;
+    animation: slideInFromLeft 0.7s ease forwards;
+    /* Add other styles if needed */
+  }
+  
+  .hidden {
+    visibility: hidden;
+    animation: slideOutFromLeft 0.5s ease forwards;
+    /* Add other styles if needed */
+  }
+  
+  @keyframes slideInFromLeft {
+    0% {
+        opacity: 0;
+        transform: translateX(-100%);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+  }
+  
+  @keyframes slideOutFromLeft {
+    0% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(-100%);
+    }
+  }
+
+  @keyframes slideInFromRight {
+    0% {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+  }

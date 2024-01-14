@@ -1,0 +1,109 @@
+.orders-component > *{
+    opacity: 0;
+  animation: viewContent 0.2s ease-in-out forwards;
+  }
+.orders-component{
+    margin: 0 100px 0 50px;
+}
+
+.delivery-status{
+    margin: 10px;
+    color: rgb(72, 61, 61);
+    background-color: rgb(255, 255, 255);
+    border: solid #fc5353 2px;
+    padding: 5px 15px 5px 15px;
+    border-radius: 25px;
+}
+
+.ordered-items{
+    width: 100%;
+    margin-top: 0;
+    margin-left: 10px;
+
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+}
+
+.ordered-items .item-header{
+    background-color: rgb(247, 247, 247);
+    display: flex;
+    justify-content: space-between; /* Places items at each end */
+    align-items: center; /* Vertically centers the items */
+    padding: 5px 15px;
+    
+    font-size: small;
+}
+
+.ordered-item{
+    border: #f0efef solid 1px;
+    border-bottom: #b9b8b8 solid 1px;
+    margin-top: 0;
+    margin-bottom: 10px;
+    margin-right: 20px;
+}
+.item-header .order-info{
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+    left: 0;
+}
+.order-info div{
+    margin: 10px 2px;
+    
+}
+
+.order-info .order-id{
+    font-weight: bold;
+    color: #6b6767;
+}
+.order-info .ordered-datetime{
+    color:#8c949f;
+}
+
+.item-header .order-view{
+    left: 100%;
+    
+}
+
+.user-section-btn{
+    text-decoration: none;
+    color:rgb(215, 109, 9);
+    border: solid 2px rgb(215, 109, 9);
+    padding: 5px 10px;
+    border-radius: 15px;
+}
+
+.user-section-btn:hover{
+    text-decoration: none;
+    color:rgb(254, 254, 255);
+background-color: rgb(215, 109, 9);
+}
+
+
+.ordered-items .item {
+    margin: 2px 0 5px 0;
+    
+    background-color: rgb(255, 255, 255);
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 10px 30px;
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+    font-size: small;
+}
+
+.item .image{
+    width: 100px;
+    height: 100px;
+}
+.item .delivery-status-outer{
+    color: #9c9393;
+}
+.item-column .delete-btn{
+    cursor: pointer;
+    font-size: 20px; 
+}
+
+.delivered{
+    border: solid #18ed00d6 2px;
+}

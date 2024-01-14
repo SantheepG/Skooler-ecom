@@ -1,0 +1,72 @@
+.complaints-component > *{
+    opacity: 0;
+  animation: viewContent 0.2s ease-in-out forwards;
+  }
+.complaints-component{
+    margin: 0 100px 0 50px;
+    
+}
+
+
+.order-info .lodged-datetime {
+    color:#8c949f;
+}
+
+.complaint-delete .delete-btn{
+    cursor: pointer;
+    font-size: 20px; 
+}
+
+.delete-btn:hover{
+    color: red;
+}
+
+.complained-item{
+    margin: 2px 0 5px 0;
+    background-color: rgb(255, 255, 255);
+    display: flex;
+    
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 10px 20px;
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+    font-size: small;
+}
+
+.item-header{
+    
+    background-color: rgb(247, 247, 247);
+    
+}
+.complained-item .image{
+    left:0;
+    height: 100px;
+    width: 100px;
+   
+}
+
+.complained-item .description{
+    left: 30%;
+    margin: 0 0 0 -250px ;
+    
+    width: 500px; /* Set a fixed width */
+    min-height: 50px;
+    word-wrap:break-word;
+}
+
+.complained-item .complaint-status {
+left: 80%;
+margin: 0 30px 0 0;
+}
+
+.complaint-status-outer{
+    color:#8c949f;
+}
+.complaint-status-inner{
+    margin: 10px;
+    color: rgb(72, 61, 61);
+    background-color: rgb(255, 255, 255);
+    border: solid #fc5353 2px;
+    padding: 5px 15px 5px 15px;
+    border-radius: 25px;
+}

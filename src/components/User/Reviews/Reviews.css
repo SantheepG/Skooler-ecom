@@ -1,0 +1,44 @@
+
+.reviews-component > *{
+    opacity: 0;
+  animation: viewContent 0.2s ease-in-out forwards;
+  }
+  .reviews-component{
+    margin: 0 100px 0 50px;
+  
+  }
+
+.list-header{
+  
+  padding: 10px;
+}
+.list-header-container{
+  border-bottom: solid 1px #ababab;
+}
+.list-header-main{
+  padding: 13px;
+  
+}
+  .list-header-main span{
+    margin: 5px 20px;
+    
+    text-decoration: none;
+  }
+
+  .list-header-main span a:hover{
+    color: brown;
+    cursor: pointer;
+   
+  }
+.list-header-main a{
+  text-decoration: none;
+  padding: 12px 0;
+  color: rgb(122, 120, 120);
+}
+.to-review {
+  border-bottom: none;
+}
+  .review-active{
+    border-bottom: rgb(255, 119, 0) solid 3px ;
+    cursor: pointer;
+  }

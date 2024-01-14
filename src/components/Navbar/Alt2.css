@@ -1,0 +1,299 @@
+*{
+	margin: 0;
+	  padding: 0;
+	  outline: none;
+	  border: none;
+	  -webkit-box-sizing: border-box;
+  }
+  *:before,
+  *:after{
+	  -webkit-box-sizing: border-box;
+  }
+
+  html{
+	  font-family: Helvetica, arial, sans-serif;
+	  font-size: 12px;
+  }
+.top-nav, .bottom-nav{
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	border-bottom: solid 1px #bdbdbd;
+	padding: 0 30px;
+}
+
+.bottom-nav{
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+
+	padding: 0 30px;
+}
+.school-logo-container{
+	flex: 1;
+	font-size: 1.5em;
+	text-align: left;
+	margin: 10px 20px;
+}
+
+.skooler-logo-container{
+	font-size: 1.5em;
+	flex: 1;
+	text-align: right;
+	margin: 10px 20px;
+}
+
+.navbar__logo {
+	text-decoration: none;
+	
+	font-weight: 700;
+	font-family: "Arizonia", cursive;
+	color: linear-gradient(147deg, #fe8a39 0%, #fd3838 74%);
+  }
+  
+  /* Example styles for each area */
+.left-nav {
+	/* Example: Align content to the left */
+	flex: 1;
+	text-align: left;
+  }
+  
+  .center-nav {
+	/* Example: Center-align content */
+	flex: 1;
+	text-align: center;
+  }
+  
+  .right-nav {
+	/* Example: Align content to the right */
+	flex: 1;
+	text-align: right;
+  }
+
+  /* nav item animations */
+.cl-effect-5 a {
+	position: relative;
+	display: inline-block;
+	margin: 25px 15px;
+	outline: none;
+	color: #8f8f8f;
+	text-decoration: none;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	font-weight: 100;
+	text-shadow: 0 0 1px rgba(255, 255, 255, 0.3);
+	font-size: 1rem;
+  }
+  
+  nav a:hover,
+  nav a:focus {
+	outline: none;
+  }
+  
+  .cl-effect-5 a {
+	
+	overflow: hidden;
+	padding: 0 4px;
+  }
+  
+  .cl-effect-5 a span {
+	
+	position: relative;
+	display: inline-block;
+	-webkit-transition: -webkit-transform 0.3s;
+	-moz-transition: -moz-transform 0.3s;
+	transition: transform 0.3s;
+  }
+  
+  .cl-effect-5 a span::before {
+	
+	position: absolute;
+	top: 100%;
+	content: attr(data-hover);
+	font-weight: 300;
+	-webkit-transform: translate3d(0, 0, 0);
+	-moz-transform: translate3d(0, 0, 0);
+	transform: translate3d(0, 0, 0);
+  }
+  
+  .cl-effect-5 a:hover span,
+  .cl-effect-5 a:focus span {
+	
+	-webkit-transform: translateY(-100%);
+	-moz-transform: translateY(-100%);
+	transform: translateY(-100%);
+  }
+
+  .searchbar-container {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+  }
+  
+  .searchbar {
+	height: 35px;
+	display: flex;
+	  float: right;
+	  background-color: rgb(243, 242, 242);
+	  color: rgb(46, 38, 38);
+	  padding: 6px 10px;
+	  width: 450px;
+	  border: none;
+	  margin-top: 1px;
+	  margin-right: 8px;
+	  font-family: "Segoe UI Light","Segoe UI","Segoe",Tahoma,Helvetica,Arial,sans-serif;
+	  font-size: 1em;
+	  font-weight: bold;
+	  border-left: rgb(228, 223, 223) solid 1px;
+	  border-right: rgb(228, 223, 223) solid 1px;
+	  transition: 0.3s;
+	  border-radius: 5px;
+  }
+  
+  .searchbar::placeholder {
+	  color: rgb(139, 135, 135);
+	  font-family: "Segoe UI Light","Segoe UI","Segoe",Tahoma,Helvetica,Arial,sans-serif;
+	  font-size: 1em;
+	  font-weight: bold;
+	  /* transition: 0.2s; */
+  }
+  
+  .searchbar:focus {
+	  width: 500px;
+	  font-family: "Segoe UI Light","Segoe UI","Segoe",Tahoma,Helvetica,Arial,sans-serif;
+	  font-size: 1em;
+	  font-weight: bold;
+	  transition: 0.3s;
+	  /* Stops the input box from inheriting the styling from the inputs on the request form */
+	  border: #e27e03b4 solid 1px;
+	  outline: none;
+	  overflow-x: auto;
+  }
+  
+  .btn-search {
+	  
+	  cursor: pointer;
+	  color: rgb(115, 114, 114);
+	  text-decoration: none !important;
+	  font-family: "Segoe UI Light","Segoe UI","Segoe",Tahoma,Helvetica,Arial,sans-serif;
+	  font-size: 1.6em;
+	  padding-top: 5px;
+	  margin-right: 40px;
+	  animation: slideInFromLeft 2s ease forwards; /* Adjust timing and easing as needed */
+  }
+  
+  .btn-search i:hover{
+	color: rgb(253, 171, 63);
+	
+  }
+  
+  .nav-right-icons a{
+	font-size: 20px;
+	color: #868484;
+	
+  }
+  
+  .visible {
+	visibility: visible;
+	animation: slideInFromLeft 0.7s ease forwards;
+	/* Add other styles if needed */
+  }
+  
+  .hidden {
+	visibility: hidden;
+	animation: slideOutFromLeft 0.5s ease forwards;
+	/* Add other styles if needed */
+  }
+  
+  @keyframes slideInFromLeft {
+	0% {
+		opacity: 0;
+		transform: translateX(-100%);
+	}
+	100% {
+		opacity: 1;
+		transform: translateX(0);
+	}
+  }
+  
+  @keyframes slideOutFromLeft {
+	0% {
+		opacity: 1;
+		transform: translateX(0);
+	}
+	100% {
+		opacity: 0;
+		transform: translateX(-100%);
+	}
+  }
+  
+  @keyframes slideInFromTop {
+	0% {
+		opacity: 0;
+		transform: translateY(-10%);
+	}
+	100% {
+		opacity: 1;
+		transform: translateY(0);
+	}
+  }
+  
+  @keyframes slideInFromdown {
+	0% {
+		opacity: 1;
+		transform: translateY(0);
+	}
+	100% {
+		opacity: 1;
+		transform: translateY(100%);
+	}
+  }
+  /* Portrait tablet to landscape and desktop */
+  @media  (max-width: 979px) {
+	.top-nav{
+
+		padding: 0 30px;
+	}
+	.school-logo-container{
+		flex: 1;
+		font-size: 1em;
+		text-align: left;
+		margin: 10px 20px;
+	}
+	
+	.skooler-logo-container{
+		font-size: 1em;
+		flex: 1;
+		text-align: right;
+		margin: 10px 20px;
+	}
+	.bottom-nav{
+		padding: 20px 30px;
+	}
+	.left-nav {
+		/* Example: Align content to the left */
+		display: none;
+	  }
+	  
+	  .center-nav {
+		/* Example: Center-align content */
+		
+		flex: 1;
+		text-align: center;
+	  }
+	
+  }
+  
+
+   
+  /* Landscape phones and down */
+  @media (max-width: 480px) {
+	.top-nav{
+		display: none;
+		justify-content: space-between;
+		align-items: center;
+		border: solid;
+		padding: 0 30px;
+	}
+  }

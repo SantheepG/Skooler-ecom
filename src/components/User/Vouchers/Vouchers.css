@@ -1,0 +1,81 @@
+.vouchers-component > *{
+    opacity: 0;
+  animation: viewContent 0.2s ease-in-out forwards;
+  }
+  .vouchers-component{
+    margin: 0 150px 0 50px;
+    
+  }
+
+
+  .vouchers-list-header-main{
+    
+    width: 100%;
+    margin: 5px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 10px;
+    height: 50px;
+  }
+
+  .vouchers-list-header-main div {
+    flex-grow: 1;
+    text-align: center; 
+  }
+
+  .vouchers-list-header-main .voucher-status{
+    left: 0;
+  }
+
+  .vouchers-list-header-main .voucher-code{
+    left: 25%;
+  }
+  .vouchers-list-header-main .voucher-valid-from{
+  left: 50%;
+}
+.vouchers-list-header-main .voucher-valid-until{
+  left: 75%;
+}
+.vouchers-list-header-main .voucher-value{
+  left: 100%;
+}
+
+.voucher-items{
+  width: 100%;
+  box-shadow: 1px 2px 3px 0px rgba(0,0,0,0.10);
+  background-color: rgb(255, 255, 255);
+  border-radius: 6px;
+  
+ 
+}
+.voucher-item{
+  width: 100%;
+  box-shadow: 1px 2px 3px 0px rgba(0,0,0,0.10);
+  border-radius: 6px;
+  display: flex;
+  height: 50px;
+  margin-top: 20px;
+  
+}
+.voucher-item div {
+  flex-grow: 1;
+  text-align: center; 
+  margin-left: 50px;
+}
+.voucher-item .voucher-status{
+  left: 0;
+}
+
+.voucher-item .voucher-code{
+  left: 25%;
+}
+.voucher-item .voucher-valid-from{
+left: 50%;
+}
+.voucher-item .voucher-valid-until{
+left: 75%;
+}
+.voucher-item .voucher-value{
+left: 100%;
+}

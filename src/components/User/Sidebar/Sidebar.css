@@ -1,0 +1,187 @@
+
+aside{
+    height: 100vh;
+    width: 30vh;
+    padding: 0 5px 0 15px;
+    font-family:var(--font-default);
+    font-size: 14px;
+    
+}
+aside .title{
+    
+    background-clip: text;
+    -webkit-background-clip: text; 
+    color: transparent;
+    
+    
+}
+aside .toggle{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    
+    
+}
+
+aside .toggle .logo{
+    display: flex;
+    gap: 0.1rem;
+}
+.logo h2{
+    margin-top: 1.2rem;
+    margin-left: 1rem;
+}
+aside .toggle .logo img{
+    width: 5.5rem;
+    height: 5rem;
+}
+
+aside .toggle .close{
+    padding-right: 1rem;
+    display: none;
+}
+
+aside .sidebar{
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(247, 247, 247);
+    box-shadow: var(--box-shadow);
+    border-radius: 15px;
+    border: #f9dcb9 solid 1px;
+    height: 70vh;
+    position: relative;
+    width: 250px;
+    transition: all 0.3s ease;
+    padding-top: 1.3rem;
+    
+}
+
+
+
+aside .sidebar a{
+    display: flex;
+    align-items: center;
+    color: #2a2d30;
+    height: 3.7rem;
+    gap: 1rem;
+    position: relative;
+    margin-left: 0.5rem;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    
+}
+
+aside .sidebar a span{
+    
+    transition: all 0.3s ease;
+}
+
+
+aside .sidebar a.active{
+    width: 100%;
+    color: #030304;
+    background-color: #eed8bc;
+    margin-left: 0;
+}
+.sidebar .active{
+     width: 100%;
+    color: #677483;
+    background-color: var(--color-light);
+    margin-left: 0;   
+}
+
+aside .sidebar a.active::before{
+    content: '';
+    width: 6px;
+    height: 30px;
+    background-color: #e27e03;
+}
+
+aside .sidebar a.active{
+    color: #ce4b4b;
+    font-weight: 600;
+    margin-left: calc(1rem - 15px);
+}
+
+aside .sidebar a:hover{
+    color: #cc6c3c;
+    font-weight: 600;
+    cursor: pointer;
+    background-color: #efc796;
+}
+
+aside .sidebar a:hover span{
+    margin-left: 0.6rem;
+}
+
+
+
+@media screen and (max-width: 1200px) {
+    aside .sidebar{
+        width: 100%;
+        grid-template-columns: 7rem auto 23rem;
+    }
+
+    aside .logo h2{
+        display: none;
+    }
+
+    aside .sidebar h3{
+        display: none;
+    }
+
+    aside .sidebar a{
+        width: 5.6rem;
+    }
+
+
+}
+
+@media screen and (max-width: 800px) {
+    aside .sidebar{
+        width: 100%;
+        grid-template-columns: 1fr;
+        padding: 0 var(--padding-1);
+    }
+
+    aside{
+        position: fixed;
+        background-color: var(--color-white);
+        width: 15rem;
+        z-index: 3;
+        box-shadow: 1rem 3rem 4rem var(--color-light);
+        height: 100vh;
+        left: -100%;
+        display: none;
+        animation: showMenu 0.4s ease forwards;
+    }
+
+    @keyframes showMenu {
+       to{
+        left: 0;
+       } 
+    }
+
+    aside .logo{
+        margin-left: 1rem;
+    }
+
+    aside .logo h2{
+        display: inline;
+    }
+
+    aside .sidebar h3{
+        display: inline;
+    }
+
+    aside .sidebar a{
+        width: 100%;
+        height: 3.4rem;
+    }
+
+
+    aside .toggle .close{
+        display: inline-block;
+        cursor: pointer;
+    }
+}

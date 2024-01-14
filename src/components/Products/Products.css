@@ -1,0 +1,59 @@
+.Sort-dropdown-content {
+    display: none; /* Initially hide the dropdown */
+    /* Other styles for dropdown appearance */
+    /* For example: */
+    position: absolute;
+  
+    
+    border: 1px solid #ccc;
+    padding: 10px;
+    /* ... */
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out; /* Smooth transition */
+  }
+  
+  .Sort-dropdown-content {
+    background-color: rgb(255, 255, 255);
+    display: block;
+    margin-left: -8%;
+    margin-top: 0.5%;
+    z-index: 999;
+    animation: slideInFromTop 0.3s ease forwards;
+  }
+  .Sort-dropdown-content ul {
+    
+    list-style: none; /* Removes the bullets from all list items within this ul */
+  }
+  
+  .Sort-dropdown-content li {
+    text-decoration: none;
+    font-size: small;
+    padding: 5px 10px;
+    background-color: white;
+    border-bottom: #c3c3c3 solid 1px;
+  
+    /* Additional styles for list items */
+  }
+  .Sort-dropdown-content li:hover {
+  cursor: pointer;
+  color: #e56b0e;
+  border-bottom: #e56b0e solid 1px;
+    /* Additional styles for list items */
+  }
+
+  .currency-symbol::before {
+    content: var(--currency-symbol); 
+}
+
+.slideInFromTopAnim{
+  animation: slideInFromTop 0.3s ease forwards;
+}
+  @keyframes slideInFromTop {
+    0% {
+        opacity: 0;
+        transform: translateY(-10%);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+  }

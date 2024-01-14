@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.skooler-main-container > *{
+    opacity: 0;
+  animation: viewContent 0.2s ease-in-out forwards;
+  }
+  
+  @keyframes viewContent {
+    0% {
+        opacity: 0;
+        
+        
+    }
+    100% {
+        opacity: 1;
+        
+    }
+  }
