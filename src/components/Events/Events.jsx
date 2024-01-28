@@ -5,6 +5,7 @@ import Footer from "../Footer";
 import { PiSortAscendingBold } from "react-icons/pi";
 import axios from "axios";
 import EventRow from "./EventRow";
+import EventPreview from "./EventPreview";
 const Events = () => {
   const [showSortDropdown, setShowSortDropdown] = useState(false);
   const [events, setEvents] = useState([]);
@@ -32,6 +33,20 @@ const Events = () => {
     fetchEvents();
   }, [reloadComponent]);
 
+  const sortNewToOld = () => {
+    const sortedEvents = [...events].sort(
+      (a, b) => new Date(b.event_datetime) - new Date(a.event_datetime)
+    );
+    setEvents(sortedEvents);
+  };
+
+  const sortOldToNew = () => {
+    const sortedEvents = [...events].sort(
+      (a, b) => new Date(a.event_datetime) - new Date(b.event_datetime)
+    );
+    setEvents(sortedEvents);
+  };
+
   return (
     <React.Fragment>
       {" "}
@@ -39,31 +54,13 @@ const Events = () => {
         <div className="navbar-header-container">
           <Navbar />
         </div>
-        <div className="skooler-main-container mr-24">
+        <div
+          className={`${
+            overlayClicked ? "opacity-40" : ""
+          } skooler-main-container mx-36`}
+        >
           <div class="flex mt-20 pt-3">
-            <div class="w-1/5 ml-5 pt-5 h-full pb-10 px-14 border border-gray-300">
-              <label
-                for="categories"
-                class="mb-10 block text-xl font-semibold  mb-5 mt-5 text-sm font-medium text-gray-500 dark:text-white"
-              >
-                Filter options
-              </label>
-
-              <div className="mt-10">
-                <span>
-                  <button class="text-sm mx-2 bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-red-300 rounded ">
-                    Reset
-                  </button>
-                </span>
-                <span>
-                  <button class="text-sm mx-2 bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-blue-300 rounded">
-                    Filter
-                  </button>
-                </span>
-              </div>
-            </div>
-
-            <div class="w-4/5 flex-1">
+            <div class=" flex-1">
               <div class="px-10 ">
                 <div className="flex justify-between w-full mb-5">
                   <div className=" text-xl font-semibold ml-10">
@@ -82,13 +79,17 @@ const Events = () => {
                       </span>
                     </button>
                     {showSortDropdown && (
-                      <div className="Sort-dropdown-content">
+                      <div className="absolute bg-white border -mx-10 mt-2 SlideDown">
                         <a
                           href="#"
                           class="font-medium text-gray-900 block px-4 py-2 text-sm hover:text-orange-400"
                           role="menuitem"
                           tabindex="-1"
                           id="menu-item-2"
+                          onClick={() => {
+                            sortNewToOld();
+                            setShowSortDropdown(!showSortDropdown);
+                          }}
                         >
                           Newest
                         </a>
@@ -98,17 +99,12 @@ const Events = () => {
                           role="menuitem"
                           tabindex="-1"
                           id="menu-item-3"
+                          onClick={() => {
+                            sortOldToNew();
+                            setShowSortDropdown(!showSortDropdown);
+                          }}
                         >
-                          Price: Low to High
-                        </a>
-                        <a
-                          href="#"
-                          class="font-medium text-gray-900 block px-4 py-2 text-sm hover:text-orange-400"
-                          role="menuitem"
-                          tabindex="-1"
-                          id="menu-item-4"
-                        >
-                          Price: High to Low
+                          Earliest
                         </a>
                       </div>
                     )}
@@ -116,46 +112,60 @@ const Events = () => {
                 </div>
 
                 <hr class="border-gray-300" />
-                <tbody>
+                <div className=" ml-10 mr-10 mt-5">
                   {events.length !== 0 ? (
                     events.map((event, index) => (
-                      <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                        <EventRow
-                          key={event.id}
-                          event={event}
-                          previewEvent={() => {
-                            setOverlayClicked(!overlayClicked);
-                            setpreviewEventClicked(!previewEventClicked);
-                            setCurrentEventIndex(index);
-                            setCurrentEvent(events[index]);
-                          }}
-                          editEvent={() => {
-                            setOverlayClicked(!overlayClicked);
-                            setEditEventClicked(!editEventClicked);
-                            setCurrentEventIndex(index);
-                            setCurrentEvent(events[index]);
-                          }}
-                          deleteEvent={() => {
-                            setOverlayClicked(!overlayClicked);
-                            setdeleteEventClicked(!deleteEventClicked);
-                            setCurrentEventIndex(index);
-                            setCurrentEvent(events[index]);
-                          }}
-                        />
-                      </tr>
+                      <EventRow
+                        key={event.id}
+                        event={event}
+                        previewEvent={() => {
+                          setOverlayClicked(!overlayClicked);
+                          setpreviewEventClicked(!previewEventClicked);
+                          setCurrentEventIndex(index);
+                          setCurrentEvent(events[index]);
+                        }}
+                        editEvent={() => {
+                          setOverlayClicked(!overlayClicked);
+                          setEditEventClicked(!editEventClicked);
+                          setCurrentEventIndex(index);
+                          setCurrentEvent(events[index]);
+                        }}
+                        deleteEvent={() => {
+                          setOverlayClicked(!overlayClicked);
+                          setdeleteEventClicked(!deleteEventClicked);
+                          setCurrentEventIndex(index);
+                          setCurrentEvent(events[index]);
+                        }}
+                      />
                     ))
                   ) : (
                     <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                       No events available
                     </tr>
                   )}
-                </tbody>
+                </div>
               </div>
             </div>
           </div>
         </div>
         <div className="footer">
           <Footer />
+        </div>
+        <div
+          id="previewUserModal"
+          tabindex="-1"
+          aria-hidden="true"
+          className={`flex fixed top-0 left-0 right-0 z-50 items-center justify-center w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-0.1rem)] max-h-full ${
+            previewEventClicked ? "" : "hidden"
+          }`}
+        >
+          <EventPreview
+            closeModal={() => {
+              setOverlayClicked(!overlayClicked);
+              setpreviewEventClicked(!previewEventClicked);
+            }}
+            event={currentEvent}
+          />
         </div>
       </div>
     </React.Fragment>

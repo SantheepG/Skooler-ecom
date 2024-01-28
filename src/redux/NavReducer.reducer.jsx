@@ -1,10 +1,12 @@
 const initialNavbarState = {
-  homeClicked: false,
+  homeClicked: true,
   productsClicked: false,
   eventsClicked: false,
   cartClicked: false,
   userClicked: false,
   productViewClicked: false,
+  eventViewClicked: false,
+  loginClicked: false,
 };
 
 const NavReducer = (state = initialNavbarState, action) => {

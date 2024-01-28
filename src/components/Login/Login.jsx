@@ -3,9 +3,13 @@ import axios from "axios";
 import "./Login.css";
 import { Toaster, toast } from "react-hot-toast";
 import Loading from "../Loading/Loading";
+import Navbar from "../Navbar/Navbar";
 import { useNavigate } from "react-router-dom";
-
+import { setClicked } from "../../redux/action";
+import { useDispatch, useSelector } from "react-redux";
 const Login = () => {
+  const dispatch = useDispatch();
+  const navBarstate = useSelector((state) => state.navbar);
   const navigate = useNavigate();
   const [isSignUpActive, setIsSignUpActive] = useState(false);
   const [nextBtnClicked, setNextBtnClicked] = useState(false);
@@ -15,6 +19,7 @@ const Login = () => {
     mobile_no: "",
     email: "",
     password: "",
+    is_active: true,
   });
 
   const handleSignUpClick = () => {
@@ -81,9 +86,17 @@ const Login = () => {
 
   const handleSignUp = async () => {
     try {
+      console.log(formData);
       const response = await axios.post(
         "http://127.0.0.1:8000/api/signup",
-        formData,
+        {
+          first_name: formData.name,
+          student_id: formData.student_id,
+          email: formData.email,
+          mobile_no: formData.mobile_no,
+          password: formData.password,
+          is_active: true,
+        },
         {
           headers: {
             "Content-Type": "application/json",
@@ -92,6 +105,16 @@ const Login = () => {
       );
       if (response.status === 201) {
         toast.success("Account successfully created", {
+          duration: 1500,
+          position: "top-center",
+          //icon: "❌",
+        });
+        setTimeout(() => {
+          window.location.reload();
+        }, 1800);
+      } else if (response.status === 500) {
+        console.log(formData);
+        toast.error("Something went wrong", {
           duration: 1500,
           position: "top-center",
           //icon: "❌",
@@ -139,6 +162,7 @@ const Login = () => {
           } else {
             localStorage.setItem("token", response.data.token);
             localStorage.setItem("user", JSON.stringify(response.data.user));
+            dispatch(setClicked("homeClicked", true));
             navigate("/");
           }
         }
@@ -162,6 +186,9 @@ const Login = () => {
 
   return (
     <React.Fragment>
+      <div className="navbar-header-container">
+        <Navbar />
+      </div>
       <div className="Login-parent-container">
         <div className="container">
           <Toaster className="notifier" />
@@ -188,13 +215,7 @@ const Login = () => {
                           placeholder="Password"
                           class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                           required=""
-                          value={formData.password}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              password: e.target.value,
-                            })
-                          }
+                          //value={formData.password}
                         />
                       </div>
 

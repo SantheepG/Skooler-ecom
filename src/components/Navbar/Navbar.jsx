@@ -10,13 +10,13 @@ import { BsSearch } from "react-icons/bs";
 import { PiShoppingCart } from "react-icons/pi";
 import Notifications from "./Notifications";
 import UserDropdown from "./UserDropdown";
-import SearchSuggestions from "./SearchSuggestions";
-import SearchBar from "./SearchBar";
+import "./SearchBar.scss";
 import SideNav from "./SideNav";
+
 const Navbar = () => {
   const dispatch = useDispatch();
   const navBarstate = useSelector((state) => state.navbar);
-  const [isFocused, setIsFocused] = useState(false);
+
   const [inputValue, setInputValue] = useState("");
   const [relatedSearch, setRelatedSearch] = useState([]);
   const navigate = useNavigate();
@@ -26,6 +26,7 @@ const Navbar = () => {
   const [userClicked, setUserClicked] = useState(false);
   const [toggleSideNav, setToggleSideNav] = useState(false);
   const [showNoResults, setShowNoResults] = useState(false);
+  const [viewResults, setViewResults] = useState(false);
   const [userData, setUserData] = useState({
     name: "",
     student_id: "",
@@ -45,6 +46,8 @@ const Navbar = () => {
       navigate("/cart");
     } else if (navBarstate.userClicked) {
       navigate("/user");
+    } else if (navBarstate.loginClicked) {
+      navigate("/login");
     }
   }, [navBarstate, navigate]);
 
@@ -90,7 +93,6 @@ const Navbar = () => {
       setShowNoResults(true);
     }, 3000);
 
-    // Clear the timeout if the component unmounts before the delay
     return () => clearTimeout(timer);
   }, []);
 
@@ -100,135 +102,210 @@ const Navbar = () => {
     }
   };
 
-  const handleFocus = () => {
-    setIsFocused(true);
-  };
-
   const handleBlur = () => {
-    setIsFocused(false);
-    setInputValue("");
+    setTimeout(() => {
+      setInputValue("");
+    }, 400);
   };
 
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
   };
 
+  const handleProductClick = (item, id) => {
+    if (!navBarstate[item]) {
+      //navBarstate.productsClicked(true);
+      dispatch(setClicked(item, true));
+      navigate(`/product/${id}`);
+    } else {
+      dispatch(setClicked(item, false));
+      //navBarstate.productsClicked(false);
+      //navBarstate.productsClicked(true);
+      dispatch(setClicked(item, true));
+      navigate(`/product/${id}`);
+    }
+  };
+
+  const handleEventClick = (item, id) => {
+    if (!navBarstate[item]) {
+      //navBarstate.eventsClicked(true);
+      dispatch(setClicked(item, true));
+      navigate(`/event/${id}`);
+    } else {
+      dispatch(setClicked(item, false));
+      //navBarstate.eventsClicked(false);
+      //navBarstate.eventsClicked(true);
+      dispatch(setClicked(item, true));
+      navigate(`/event/${id}`);
+    }
+  };
+
   return (
     <React.Fragment>
       <header>
-        <div>
-          <nav class="bg-white dark:bg-gray-900 w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600">
-            <div class="flex justify-between items-center max-w-screen-xl flex flex-wrap items-center justify-between mx-auto py-4 px-2">
-              <div className="flex-none">
-                {" "}
-                <a
-                  href="https://flowbite.com/"
-                  class="flex items-center space-x-3 rtl:space-x-reverse"
-                >
-                  <span class="text-gray-500 self-center text-2xl font-semibold whitespace-nowrap dark:text-white w-10">
-                    Skool logo
-                  </span>
-                </a>
-              </div>
+        <div class="flex justify-between items-center max-w-screen-xl mx-auto py-4 px-2">
+          <div className="flex-none">
+            {" "}
+            <a
+              href="https://flowbite.com/"
+              class="flex items-center space-x-3 rtl:space-x-reverse"
+            >
+              <span class="text-gray-500 self-center text-2xl font-semibold whitespace-nowrap dark:text-white w-10">
+                Skool logo
+              </span>
+            </a>
+          </div>
 
-              <div class="searchbar-container">
-                <input
-                  id="searchBar"
-                  class="searchbar"
-                  type="text"
-                  placeholder="Search"
-                  value={inputValue}
-                  onFocus={() => {
-                    setSearchBarClicked(true);
-                    setIsFocused(true);
-                  }}
-                  onBlur={() => {
-                    setSearchBarClicked(false);
-                    handleBlur();
-                  }}
-                  onChange={handleInputChange}
-                />
-                <a
-                  id="btnSearch"
-                  class={`btn-search ${
-                    searchBarClicked ? "visible" : "hidden"
-                  }`}
-                >
-                  <i class="fa fa-search">
-                    <BsSearch />
-                  </i>
-                </a>
-                {inputValue !== "" && (
-                  <div class="SlideDown absolute mt-20 resoult-tab resoult-tab-active">
-                    {relatedSearch.length !== 0 ? (
-                      navBarstate.eventsClicked ? (
-                        <div className="ul overflow-y-auto">
-                          <div class="ul-title">
-                            <p>Related events</p>
-                          </div>
-                          {relatedSearch.event_result.map((event) => (
-                            <div class="li" key={event.id}>
-                              <div class="li-icon">
-                                <i data-feather="clipboard" class="icon"></i>
-                              </div>
-                              <div class="li-text">{event.event_info}</div>
-                            </div>
-                          ))}
-                          <div class="ul-title">
-                            <p>Related products</p>
-                          </div>
-                          {relatedSearch.product_results.map((product) => (
-                            <div class="li" key={product.products_id}>
-                              <div class="li-icon">
-                                <i data-feather="clipboard" class="icon"></i>
-                              </div>
-                              <div class="li-text">{product.name}</div>
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <div className="ul overflow-y-auto">
-                          <div class="ul-title">
-                            <p>Related products</p>
-                          </div>
-                          {relatedSearch.product_results.map((product) => (
-                            <div class="li" key={product.products_id}>
-                              <div class="li-icon">
-                                <i data-feather="clipboard" class="icon"></i>
-                              </div>
-                              <div class="li-text">{product.name}</div>
-                            </div>
-                          ))}
-                          <div class="ul-title">
-                            <p>Related events</p>
-                          </div>
-                          {relatedSearch.event_result.map((event) => (
-                            <div class="li" key={event.id}>
-                              <div class="li-icon">
-                                <i data-feather="clipboard" class="icon"></i>
-                              </div>
-                              <div class="li-text">{event.event_info}</div>
-                            </div>
-                          ))}
-                        </div>
-                      )
-                    ) : (
-                      <div className="ul">
-                        <p className="text-gray-500 ml-10 mt-5">
-                          No results found
-                        </p>
+          <div
+            className={`${
+              navBarstate.loginClicked ? "hidden" : ""
+            } searchbar-container flex justify-center flex-grow relative`}
+          >
+            <input
+              id="searchBar"
+              class="searchbar"
+              type="text"
+              placeholder="Search"
+              value={inputValue}
+              onFocus={() => {
+                setSearchBarClicked(true);
+                setViewResults(true);
+              }}
+              onBlur={() => {
+                setSearchBarClicked(false);
+                handleBlur();
+                //setViewResults(false);
+              }}
+              onChange={handleInputChange}
+            />
+            <a
+              id="btnSearch"
+              class={`btn-search ${searchBarClicked ? "visible" : "hidden"}`}
+            >
+              <i class="fa fa-search">
+                <BsSearch />
+              </i>
+            </a>
+            {inputValue !== "" && (
+              <div class="SlideDown absolute mt-20 resoult-tab resoult-tab-active">
+                {relatedSearch.length !== 0 ? (
+                  navBarstate.eventsClicked ? (
+                    <div className="ul overflow-y-auto">
+                      <div className="ul-title">
+                        <p>Related events</p>
                       </div>
-                    )}
+                      {relatedSearch.event_result.map((event) => (
+                        <div
+                          className="li cursor-pointer"
+                          key={event.id}
+                          onClick={() => {
+                            handleEventClick("eventClicked", event.id);
+                          }}
+                        >
+                          <div className="li-icon">
+                            <i data-feather="clipboard" className="icon"></i>
+                          </div>
+                          <div>
+                            <div className="li-text">{event.event_name}</div>
+                            <div className="text-gray-400 text-xs">
+                              To be held on : {event.event_datetime}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                      <div className="ul-title">
+                        <p>Related products</p>
+                      </div>
+                      {relatedSearch.product_results.map((product) => (
+                        <div
+                          className="li cursor-pointer"
+                          key={product.id}
+                          onClick={() => {
+                            handleProductClick(
+                              "productViewClicked",
+                              product.id
+                            );
+                          }}
+                        >
+                          <div className="li-icon">
+                            <i data-feather="clipboard" className="icon"></i>
+                          </div>
+                          <div className="li-text cursor-pointer">
+                            {product.name}
+                          </div>
+                          <div className="text-gray-400 text-xs ml-4">
+                            {product.colour !== null ? product.colour : ""}
+                            {" | " + product.size !== null ? product.size : ""}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="ul overflow-y-auto">
+                      <div className="ul-title">
+                        <p>Related products</p>
+                      </div>
+                      {relatedSearch.product_results.map((product) => (
+                        <div
+                          className="li cursor-pointer"
+                          key={product.id}
+                          onClick={() => {
+                            handleProductClick(
+                              "productViewClicked",
+                              product.id
+                            );
+                          }}
+                        >
+                          <div className="li-icon">
+                            <i data-feather="clipboard" class="icon"></i>
+                          </div>
+                          <div className="li-text cursor-pointer">
+                            {product.name}
+                          </div>
+                          <div className="text-gray-400 text-xs ml-4">
+                            {product.colour !== null ? product.colour : ""}
+                            {" | " + product.size !== null ? product.size : ""}
+                          </div>
+                        </div>
+                      ))}
+                      <div className="ul-title">
+                        <p>Related events</p>
+                      </div>
+                      {relatedSearch.event_result.map((event) => (
+                        <div
+                          className="li cursor-pointer"
+                          key={event.id}
+                          onClick={() => {
+                            handleEventClick("eventClicked", event.id);
+                          }}
+                        >
+                          <div className="li-icon">
+                            <i data-feather="clipboard" className="icon"></i>
+                          </div>
+                          <div>
+                            <div className="li-text">{event.event_name}</div>
+                            <div className="text-gray-400 text-xs">
+                              To be held on : {event.event_datetime}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )
+                ) : (
+                  <div className="ul">
+                    <p className="text-gray-500 ml-10 mt-5">No results found</p>
                   </div>
                 )}
               </div>
+            )}
+          </div>
 
-              <div className="flex-none self-center text-2xl font-semibold whitespace-nowrap dark:text-white w-10 text-gray-500">
-                Skooler
-              </div>
-            </div>
-          </nav>
+          <div className="flex-none self-center text-2xl font-semibold whitespace-nowrap dark:text-white text-gray-500">
+            Skooler
+          </div>
         </div>
+
         <nav class="absolute w-full bg-white border-gray-200 px4 lg:px-6 py-2.5 dark:bg-gray-800">
           <div class="flex flex-wrap justify-between items-center">
             <div class="flex justify-start items-center">
@@ -319,9 +396,8 @@ const Navbar = () => {
                   }}
                 >
                   <span class="sr-only">View notifications</span>
-
                   <svg
-                    class="w-5 h-5"
+                    className="w-5 h-5"
                     aria-hidden="true"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="currentColor"
@@ -329,6 +405,7 @@ const Navbar = () => {
                   >
                     <path d="M12.133 10.632v-1.8A5.406 5.406 0 0 0 7.979 3.57.946.946 0 0 0 8 3.464V1.1a1 1 0 0 0-2 0v2.364a.946.946 0 0 0 .021.106 5.406 5.406 0 0 0-4.154 5.262v1.8C1.867 13.018 0 13.614 0 14.807 0 15.4 0 16 .538 16h12.924C14 16 14 15.4 14 14.807c0-1.193-1.867-1.789-1.867-4.175ZM3.823 17a3.453 3.453 0 0 0 6.354 0H3.823Z" />
                   </svg>
+                  <div class="absolute mx-1.5 my-0.5 h-1.5 w-1.5 rounded-full bg-orange-400 me-2"></div>
                 </button>
 
                 <button
@@ -354,7 +431,7 @@ const Navbar = () => {
               <button
                 class="mr-20 bg-transparent hover:bg-orange-400 text-orange-400 font-semibold hover:text-white py-2 px-4 border border-orange-300 hover:border-transparent rounded"
                 onClick={() => {
-                  navigate("/login");
+                  handleEventClick("loginClicked");
                 }}
               >
                 Login
@@ -364,20 +441,17 @@ const Navbar = () => {
         </nav>
         <div
           className={`top-20 right-0 mt-12 mr-12 ${
-            notificationsClicked ? "fixed z-10" : "hidden"
+            notificationsClicked ? "absolute z-10" : "hidden"
           }`}
         >
           <Notifications />
         </div>
         <div
           className={`top-20 my-12 right-0 mr-7 ${
-            userClicked ? "fixed z-10" : "hidden"
+            userClicked ? "absolute z-10" : "hidden"
           }`}
         >
           <UserDropdown userData={userData} />
-        </div>
-        <div className={toggleSideNav ? "my-20 absolute" : "hidden"}>
-          <SideNav />
         </div>
       </header>
     </React.Fragment>

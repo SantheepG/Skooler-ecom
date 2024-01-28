@@ -3,7 +3,7 @@ import "./Vouchers.css";
 const Vouchers = () => {
   return (
     <React.Fragment>
-      <div className="vouchers-component">
+      <div className="vouchers-component ViewContent">
         <div className="list-header">
           <div className="list-header-container">
             <div className="vouchers-list-header-main">

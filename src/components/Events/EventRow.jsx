@@ -2,91 +2,115 @@ import React, { useState } from "react";
 
 const EventRow = ({ event, previewEvent, editEvent, deleteEvent }) => {
   const [viewEditDropdown, setViewEditDropdown] = useState(false);
+
+  const formatDate = (dateString) => {
+    const options = {
+      hour: "2-digit",
+      minute: "2-digit",
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    };
+
+    const formattedDate = new Date(dateString).toLocaleString("en-US", options);
+    return formattedDate;
+  };
+
   return (
     <React.Fragment>
-      <th
-        scope="row"
-        class="flex items-center px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-      >
-        <img
-          src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8ZXZlbnR8ZW58MHx8MHx8fDA%3D"
-          alt="iMac Front Image"
-          class="h-8 w-auto mr-3"
-        />
-        <div class="flex items-center mr-3">{event.event_name}</div>
-      </th>
-      <td class="px-6 py-3">
-        <div class="flex items-center">{event.event_info} </div>
-        <div className="text-gray-500 text-xs">
-          <span className="text-gray-400 text-xs">venue : </span>
-          {event.venue}
-        </div>
-      </td>
-      <td class="px-8 py-3">
-        <div class="w-36 flex items-center overflow-hidden whitespace-nowrap"></div>
-      </td>
-      <td class="px-4 py-3">
-        <div class="">
-          <div class="flex items-center">${event.payment} </div>
-          <div className="text-gray-500 text-xs">
-            <span className="text-gray-400">Deadeline : </span>
-            {event.payment_deadline}
+      <div class="">
+        <div
+          className="group cursor-pointer mx-2 mt-10 grid max-w-screen-lg grid-cols-1 space-x-8 overflow-hidden rounded-lg border text-gray-700 shadow transition hover:shadow-md sm:mx-auto sm:grid-cols-5"
+          onClick={() => {
+            previewEvent();
+          }}
+        >
+          <a
+            href="#"
+            class="col-span-2 h-48 w-96 text-left text-gray-600 hover:text-gray-700"
+          >
+            <div class="group relative h-full w-full overflow-hidden">
+              <img
+                src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8ZXZlbnR8ZW58MHx8MHx8fDA%3D"
+                alt=""
+                class="h-full w-full border-none object-cover text-gray-700 transition group-hover:scale-125"
+              />
+              {parseInt(event.payment) === 0 ? (
+                <span class="absolute top-2 left-2 rounded-full bg-yellow-200 px-2 text-xs font-semibold text-yellow-600">
+                  Free
+                </span>
+              ) : null}
+              <img
+                src="/images/AnbWyIjnwNbW9Wz6c_cja.svg"
+                class="absolute inset-1/2 w-10 max-w-full -translate-x-1/2 -translate-y-1/2 transition group-hover:scale-125"
+                alt=""
+              />
+            </div>
+          </a>
+          <div class="col-span-3 flex flex-col space-y-3 pr-8 text-left">
+            <a href="#" class="mt-3 overflow-hidden text-xl font-semibold">
+              {event.event_name}
+            </a>
+            <p class="overflow-hidden text-sm">{event.event_info}</p>
+            <a
+              href="#"
+              class="text-xs font-semibold text-gray-500 hover:text-gray-700"
+            >
+              Venue : {event.venue}
+            </a>
+            <a
+              href="#"
+              class="text-xs font-semibold text-gray-500 hover:text-gray-700"
+            ></a>
+
+            <div class="flex flex-col text-gray-700 sm:flex-row">
+              <div class="flex h-fit space-x-2 text-xs ">
+                <div class="rounded-full border border-blue-300 b-2 px-2 py-0.5 text-green-700">
+                  {event.event_datetime !== null &&
+                    formatDate(event.event_datetime)}
+                </div>
+
+                {parseInt(event.payment) !== 0 && (
+                  <div class="rounded-full bg-blue-100 px-4 py-1 text-blue-900">
+                    <span>$</span>
+                    <span>{event.payment}</span>
+                  </div>
+                )}
+
+                {event.capacity !== null ? (
+                  event.capacity === event.reserved_slots ? (
+                    <span class="inline-flex items-center px-4 py-1 bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300">
+                      <span class="w-2 h-2 me-1 bg-red-500 rounded-full"></span>
+                      Unavailable
+                    </span>
+                  ) : (
+                    <span class="inline-flex items-center px-4 py-1 bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">
+                      <span class="w-2 h-2 me-1 bg-green-500 rounded-full"></span>
+                      Available
+                    </span>
+                  )
+                ) : (
+                  <span class="inline-flex items-center px-4 py-1 bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">
+                    <span class="w-2 h-2 me-1 bg-green-500 rounded-full"></span>
+                    Available
+                  </span>
+                )}
+                {event.payment_deadline !== null ? (
+                  <div>Closing date : {event.payment_deadline}</div>
+                ) : null}
+
+                <div></div>
+              </div>
+              <a
+                href="#"
+                class=" rounded-md px-5 py-2 text-center transition hover:scale-105 border-2 border-orange-300 text-gray-600 sm:ml-auto"
+              >
+                View
+              </a>
+            </div>
           </div>
         </div>
-      </td>
-      <td></td>
-
-      <td class="px-8 py-4">
-        <a
-          href="#"
-          class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-          onClick={() => setViewEditDropdown(!viewEditDropdown)}
-        >
-          <svg
-            class="w-5 h-5"
-            aria-hidden="true"
-            fill="currentColor"
-            viewbox="0 0 20 20"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
-          </svg>
-        </a>
-        <ul
-          className={`absolute z-[1000] float-left m-0  min-w-max list-none overflow-hidden rounded-lg border-none bg-white bg-clip-padding text-left text-base shadow-lg dark:bg-neutral-700 [&[data-te-dropdown-show]]:block ${
-            viewEditDropdown ? "-mx-10" : "hidden"
-          }`}
-          aria-labelledby="dropdownMenuButton1"
-          data-te-dropdown-menu-ref
-        >
-          <li>
-            <a
-              class="block w-full whitespace-nowrap bg-transparent px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-neutral-100 active:text-neutral-800 active:no-underline disabled:pointer-events-none disabled:bg-transparent disabled:text-neutral-400 dark:text-neutral-200 dark:hover:bg-neutral-600"
-              href="#"
-              data-te-dropdown-item-ref
-              onClick={() => {
-                setViewEditDropdown(false);
-                previewEvent();
-              }}
-            >
-              Preview
-            </a>
-          </li>
-          <li>
-            <a
-              class="block w-full whitespace-nowrap bg-transparent px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-neutral-100 active:text-neutral-800 active:no-underline disabled:pointer-events-none disabled:bg-transparent disabled:text-neutral-400 dark:text-neutral-200 dark:hover:bg-neutral-600"
-              href="#"
-              data-te-dropdown-item-ref
-              onClick={() => {
-                setViewEditDropdown(false);
-                editEvent();
-              }}
-            >
-              Book ticket
-            </a>
-          </li>
-        </ul>
-      </td>
+      </div>
     </React.Fragment>
   );
 };

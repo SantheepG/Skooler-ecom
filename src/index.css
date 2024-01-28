@@ -7,6 +7,9 @@
   animation: viewContent 0.2s ease-in-out forwards;
   }
   
+  .ViewContent{
+    animation: viewContent 0.2s ease-in-out forwards;
+  }
   @keyframes viewContent {
     0% {
         opacity: 0;

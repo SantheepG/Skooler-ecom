@@ -20,6 +20,8 @@ const ProductView = () => {
   const [givenRating, setgivenRating] = useState(0);
   const [givenReview, setgivenReview] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
+  const [reloadCom, setReloadCom] = useState(true);
+  const [qty, setQty] = useState(1);
   const [userData, setUserData] = useState({
     id: "",
     name: "",
@@ -28,6 +30,15 @@ const ProductView = () => {
     email: "",
     password: "",
   });
+
+  const [imgs, setImgs] = useState([
+    "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8OHx8c25lYWtlcnxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60",
+    "https://images.pexels.com/photos/90946/pexels-photo-90946.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
+    "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cHJvZHVjdHxlbnwwfHwwfHx8MA%3D%3D",
+  ]);
+  const [imgToView, setImgToView] = useState(
+    "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8OHx8c25lYWtlcnxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60"
+  );
 
   useEffect(() => {
     const fetchRelatedProducts = async () => {
@@ -67,13 +78,19 @@ const ProductView = () => {
 
         setProductData(response.data.product);
         setProductReviews(response.data.reviews);
+        setReloadCom(false);
+        if (response.data.product.stock === 0) {
+          setAddText("Out of stock");
+        } else {
+          setAddText("Add to cart");
+        }
       } catch (error) {
         console.log("Error:", error);
       }
     };
 
     fetchProductData();
-  }, []);
+  }, [reloadCom, id]);
 
   const addToCart = async () => {
     if (!loggedIn) {
@@ -84,13 +101,15 @@ const ProductView = () => {
           "http://127.0.0.1:8000/api/cart/add",
           {
             user_id: userData.id,
-            product_id: productData.products_id,
+            product_id: productData.id,
             product_name: productData.name,
-            quantity: 1,
+            quantity: qty,
             price: productData.discounted_price
               ? productData.discounted_price
               : productData.price,
-            totalPrice: productData.price,
+            totalPrice: productData.discounted_price
+              ? productData.discounted_price * qty
+              : productData.price * qty,
           },
           {
             headers: {
@@ -111,24 +130,41 @@ const ProductView = () => {
     }
   };
 
-  const rateProduct = async (r) => {
+  const rateProduct = async () => {
     if (userData.id === "") {
       toast.error("Kindly login to review this product");
-      setgivenRating(0);
     } else {
       try {
-        const response = axios.post("http://127.0.0.1:8000/api/product/rate", {
-          product_id: productData.products_id,
-          user_id: userData.id,
-          rating: r,
-        });
+        if (givenReview !== "") {
+          const response = axios.post(
+            "http://127.0.0.1:8000/api/product/rate",
+            {
+              product_id: productData.id,
+              product_name: productData.name,
+              user_id: userData.id,
+              user_name: `${userData.first_name} ${
+                userData.last_name ? userData.last_name : ""
+              }`,
+              comment: givenReview,
+              rating: givenRating,
+            }
+          );
 
-        if (response) {
-          toast.success("Thank you for rating!");
+          if (response) {
+            setReviewClicked(false);
+            setgivenRating(0);
+            toast.success("Thank you for rating!");
+            setTimeout(() => {
+              setReloadCom(true);
+            }, 1000);
+          } else {
+            toast.error("Something went wrong. Please try again");
+          }
         } else {
-          toast.error("Error in rating. Please try again");
+          toast.error("Field is empty");
         }
       } catch (error) {
+        toast.error("Something went wrong. Please try again");
         console.log(error);
       }
     }
@@ -171,16 +207,47 @@ const ProductView = () => {
                 <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                   <div class="flex flex-col md:flex-row -mx-4">
                     <div class="md:flex-1 px-4">
-                      <div class="h-[460px] rounded-lg bg-gray-300 dark:bg-gray-700 mb-4">
-                        <img
-                          class="w-full h-full object-cover"
-                          src="https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8OHx8c25lYWtlcnxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60"
-                          alt="Product Image"
-                        />
+                      <div class="h-[320px] rounded-lg mb-12">
+                        <div class="lg:flex lg:items-start">
+                          <div class="lg:order-2 ">
+                            <div class="max-w-xl overflow-hidden rounded-lg">
+                              <img
+                                class="h-full w-full max-w-full object-cover"
+                                src={imgToView}
+                                alt=""
+                              />
+                            </div>
+                          </div>
+
+                          <div class="mt-2 w-full lg:order-1 lg:w-32 lg:flex-shrink-0 overflow-y-auto h-72">
+                            <div class="flex flex-row items-start lg:flex-col ">
+                              {imgs.length !== 0 &&
+                                imgs.map((img, index) => (
+                                  <button
+                                    type="button"
+                                    className={`${
+                                      imgToView === img
+                                        ? "border-gray-900"
+                                        : "border-transparent"
+                                    } flex-0 aspect-square mb-3 h-20 overflow-hidden rounded-lg border-2 text-center`}
+                                    onClick={() => setImgToView(img)}
+                                  >
+                                    <img
+                                      key={index}
+                                      className="h-full w-full object-cover"
+                                      src={img}
+                                      alt=""
+                                    />
+                                  </button>
+                                ))}
+                            </div>
+                          </div>
+                        </div>
                       </div>
                       <div class="flex -mx-2 mb-4">
                         <div class="w-1/2 px-2">
                           <button
+                            disabled={productData.stock === 0}
                             class="w-full bg-gray-900 dark:bg-gray-600 text-white py-2 px-4 rounded-full font-bold hover:bg-gray-800 dark:hover:bg-gray-700"
                             onClick={addToCart}
                           >
@@ -188,7 +255,10 @@ const ProductView = () => {
                           </button>
                         </div>
                         <div class="w-1/2 px-2">
-                          <button class="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white py-2 px-4 rounded-full font-bold hover:bg-gray-300 dark:hover:bg-gray-600">
+                          <button
+                            disabled={productData.stock === 0}
+                            class="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white py-2 px-4 rounded-full font-bold hover:bg-gray-300 dark:hover:bg-gray-600"
+                          >
                             Buy now
                           </button>
                         </div>
@@ -204,7 +274,7 @@ const ProductView = () => {
                         </div>
 
                         <div class="pb-5 bg-white px-4 sm:my-0 sm:ml-auto">
-                          <div class="flex items-center">
+                          <div class="flex items-center w-36">
                             <svg
                               class="w-4 h-4 text-yellow-300 me-1"
                               aria-hidden="true"
@@ -215,7 +285,7 @@ const ProductView = () => {
                               <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
                             </svg>
                             <p class="ms-2 text-sm font-bold text-gray-900 dark:text-white">
-                              {avgr} / 5
+                              {productData.avg_rating} / 5
                             </p>
                             <span class="w-1 h-1 mx-1.5 bg-gray-500 rounded-full dark:bg-gray-400"></span>
                             <a
@@ -263,8 +333,8 @@ const ProductView = () => {
                           <span class="font-bold text-gray-700 dark:text-gray-300 ">
                             Availability :{" "}
                           </span>
-                          {productData.quantity !== 0 ? (
-                            productData.quantity < 4 ? (
+                          {productData.stock !== 0 ? (
+                            productData.stock < 4 ? (
                               <span className="text-red-600 dark:text-gray-300">
                                 Only {productData.stock} left
                               </span>
@@ -281,37 +351,28 @@ const ProductView = () => {
                         </div>
                       </div>
                       <div class="mb-6">
-                        <span class="font-bold text-gray-700 dark:text-gray-300">
-                          Select Color :
-                        </span>
-                        <div class="flex items-center mt-2">
-                          <button class="w-6 h-6 rounded-full bg-gray-800 dark:bg-gray-200 mr-2"></button>
-                          <button class="w-6 h-6 rounded-full bg-red-500 dark:bg-red-700 mr-2"></button>
-                          <button class="w-6 h-6 rounded-full bg-blue-500 dark:bg-blue-700 mr-2"></button>
-                          <button class="w-6 h-6 rounded-full bg-yellow-500 dark:bg-yellow-700 mr-2"></button>
-                        </div>
+                        {productData.color !== null ? (
+                          <>
+                            <span class="font-bold text-gray-700 dark:text-gray-300">
+                              Color :
+                            </span>
+                            <div class="flex items-center mt-2">
+                              <span>{productData.color}</span>
+                            </div>
+                          </>
+                        ) : null}
                       </div>
                       <div class="mb-4">
-                        <span class="font-bold text-gray-700 dark:text-gray-300">
-                          Select Size:
-                        </span>
-                        <div class="flex items-center mt-2">
-                          <button class="bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-white py-2 px-4 rounded-full font-bold mr-2 hover:bg-gray-400 dark:hover:bg-gray-600">
-                            S
-                          </button>
-                          <button class="bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-white py-2 px-4 rounded-full font-bold mr-2 hover:bg-gray-400 dark:hover:bg-gray-600">
-                            M
-                          </button>
-                          <button class="bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-white py-2 px-4 rounded-full font-bold mr-2 hover:bg-gray-400 dark:hover:bg-gray-600">
-                            L
-                          </button>
-                          <button class="bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-white py-2 px-4 rounded-full font-bold mr-2 hover:bg-gray-400 dark:hover:bg-gray-600">
-                            XL
-                          </button>
-                          <button class="bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-white py-2 px-4 rounded-full font-bold mr-2 hover:bg-gray-400 dark:hover:bg-gray-600">
-                            XXL
-                          </button>
-                        </div>
+                        {productData.size !== 0 ? (
+                          <>
+                            <span class="font-bold text-gray-700 dark:text-gray-300">
+                              Size:
+                            </span>
+                            <div class="flex items-center mt-2">
+                              {productData.size}
+                            </div>
+                          </>
+                        ) : null}
                       </div>
                       <div className="mt-6">
                         <span class="font-bold text-gray-700 dark:text-gray-300">
@@ -320,6 +381,20 @@ const ProductView = () => {
                         <p class="text-gray-600 dark:text-gray-300 text-sm mt-2">
                           {productData.description}
                         </p>
+                      </div>
+                      <div className="mt-4 w-24">
+                        <span class="font-bold text-gray-700 dark:text-gray-300">
+                          Quantity:
+                        </span>
+                        <input
+                          type="number"
+                          name="qty"
+                          id="qty"
+                          min={1}
+                          value={qty}
+                          className="bg-gray-50 mt-4 w-24 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                          onChange={(e) => setQty(parseInt(e.target.value))}
+                        />
                       </div>
                     </div>
                   </div>
@@ -338,183 +413,190 @@ const ProductView = () => {
                     </button>
                   </div>
                 </div>
-                <div
-                  className={`SlideDown flex border rounded w-1/2 mt-5 ml-20 ${
-                    reviewClicked ? "" : "hidden"
-                  }`}
-                >
-                  <div className="border rounded m-2 w-2/3 ">
-                    <textarea
-                      id="review"
-                      rows="4"
-                      class=" w-full pt-10 rounded pl-5 h-36 px-0 text-sm text-gray-800 bg-white border-0 dark:bg-gray-800 focus:ring-0 dark:text-white dark:placeholder-gray-400"
-                      placeholder="We'd like to hear from you"
-                      onChange={(e) => setgivenReview(e.target.value)}
-                    ></textarea>
-                  </div>
-                  <div className="m-2 w-1/3 ">
-                    <div class="flex w-full items-center pl-10 pt-3 pb-5">
-                      <button
-                        type="button"
-                        class={`${
-                          givenRating === 1 || givenRating > 1
-                            ? "text-yellow-400"
-                            : "text-gray-300"
-                        } w-5 h-5 inline-flex justify-center items-center text-2xl rounded-full hover:text-yellow-400 disabled:opacity-50 disabled:pointer-events-none dark:text-yellow-500`}
-                        onClick={() => {
-                          setgivenRating(1);
-                          rateProduct(1);
-                        }}
-                      >
-                        <svg
-                          class="flex-shrink-0 w-5 h-5"
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          fill="currentColor"
-                          viewBox="0 0 16 16"
+                {reviewClicked && (
+                  <div
+                    className={`SlideDown flex border rounded w-1/2 mt-5 ml-20 ${
+                      reviewClicked ? "" : "hidden"
+                    }`}
+                  >
+                    <div className="border rounded m-2 w-2/3 ">
+                      <textarea
+                        id="review"
+                        rows="4"
+                        class=" w-full pt-10 rounded pl-5 h-36 px-0 text-sm text-gray-800 bg-white border-0 dark:bg-gray-800 focus:ring-0 dark:text-white dark:placeholder-gray-400"
+                        placeholder="We'd like to hear from you"
+                        onChange={(e) => setgivenReview(e.target.value)}
+                      ></textarea>
+                    </div>
+                    <div className="m-2 w-1/3 ">
+                      <div class="flex w-full items-center pl-10 pt-3 pb-5">
+                        <button
+                          type="button"
+                          class={`${
+                            givenRating === 1 || givenRating > 1
+                              ? "text-yellow-400"
+                              : "text-gray-300"
+                          } w-5 h-5 inline-flex justify-center items-center text-2xl rounded-full  disabled:opacity-50 disabled:pointer-events-none dark:text-yellow-500`}
+                          onClick={() => {
+                            setgivenRating(1);
+                          }}
                         >
-                          <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
-                        </svg>
-                      </button>
-                      <button
-                        type="button"
-                        class={`${
-                          givenRating === 2 || givenRating > 2
-                            ? "text-yellow-400"
-                            : "text-gray-300"
-                        } w-5 h-5 inline-flex justify-center items-center text-2xl rounded-full hover:text-yellow-400 disabled:opacity-50 disabled:pointer-events-none dark:text-yellow-500`}
-                        onClick={() => {
-                          setgivenRating(2);
-                          rateProduct(2);
-                        }}
-                      >
-                        <svg
-                          class="flex-shrink-0 w-5 h-5"
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          fill="currentColor"
-                          viewBox="0 0 16 16"
+                          <svg
+                            class="flex-shrink-0 w-5 h-5"
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            fill="currentColor"
+                            viewBox="0 0 16 16"
+                          >
+                            <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
+                          </svg>
+                        </button>
+                        <button
+                          type="button"
+                          class={`${
+                            givenRating === 2 || givenRating > 2
+                              ? "text-yellow-400"
+                              : "text-gray-300"
+                          } w-5 h-5 inline-flex justify-center items-center text-2xl rounded-full disabled:opacity-50 disabled:pointer-events-none dark:text-yellow-500`}
+                          onClick={() => {
+                            setgivenRating(2);
+                          }}
                         >
-                          <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
-                        </svg>
-                      </button>
-                      <button
-                        type="button"
-                        class={`${
-                          givenRating === 3 || givenRating > 3
-                            ? "text-yellow-400"
-                            : "text-gray-300"
-                        } w-5 h-5 inline-flex justify-center items-center text-2xl rounded-full hover:text-yellow-400 disabled:opacity-50 disabled:pointer-events-none dark:text-yellow-500`}
-                        onClick={() => {
-                          setgivenRating(3);
-                          rateProduct(3);
-                        }}
-                      >
-                        <svg
-                          class="flex-shrink-0 w-5 h-5"
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          fill="currentColor"
-                          viewBox="0 0 16 16"
+                          <svg
+                            class="flex-shrink-0 w-5 h-5"
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            fill="currentColor"
+                            viewBox="0 0 16 16"
+                          >
+                            <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
+                          </svg>
+                        </button>
+                        <button
+                          type="button"
+                          class={`${
+                            givenRating === 3 || givenRating > 3
+                              ? "text-yellow-400"
+                              : "text-gray-300"
+                          } w-5 h-5 inline-flex justify-center items-center text-2xl rounded-full disabled:opacity-50 disabled:pointer-events-none dark:text-yellow-500`}
+                          onClick={() => {
+                            setgivenRating(3);
+                          }}
                         >
-                          <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
-                        </svg>
-                      </button>
-                      <button
-                        type="button"
-                        class={`${
-                          givenRating === 4 || givenRating > 4
-                            ? "text-yellow-400"
-                            : "text-gray-300"
-                        } w-5 h-5 inline-flex justify-center items-center text-2xl rounded-full hover:text-yellow-400 disabled:opacity-50 disabled:pointer-events-none dark:text-yellow-500`}
-                        onClick={() => {
-                          setgivenRating(4);
-                          rateProduct(4);
-                        }}
-                      >
-                        <svg
-                          class="flex-shrink-0 w-5 h-5"
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          fill="currentColor"
-                          viewBox="0 0 16 16"
+                          <svg
+                            class="flex-shrink-0 w-5 h-5"
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            fill="currentColor"
+                            viewBox="0 0 16 16"
+                          >
+                            <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
+                          </svg>
+                        </button>
+                        <button
+                          type="button"
+                          class={`${
+                            givenRating === 4 || givenRating > 4
+                              ? "text-yellow-400"
+                              : "text-gray-300"
+                          } w-5 h-5 inline-flex justify-center items-center text-2xl rounded-full disabled:opacity-50 disabled:pointer-events-none dark:text-yellow-500`}
+                          onClick={() => {
+                            setgivenRating(4);
+                          }}
                         >
-                          <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
-                        </svg>
-                      </button>
-                      <button
-                        type="button"
-                        class={`${
-                          givenRating === 5 || givenRating > 5
-                            ? "text-yellow-400"
-                            : "text-gray-300"
-                        } w-5 h-5 inline-flex justify-center items-center text-2xl rounded-full hover:text-yellow-400 disabled:opacity-50 disabled:pointer-events-none dark:text-yellow-500`}
-                        onClick={() => {
-                          setgivenRating(5);
-                          rateProduct(5);
-                        }}
-                      >
-                        <svg
-                          class="flex-shrink-0 w-5 h-5"
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          fill="currentColor"
-                          viewBox="0 0 16 16"
+                          <svg
+                            class="flex-shrink-0 w-5 h-5"
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            fill="currentColor"
+                            viewBox="0 0 16 16"
+                          >
+                            <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
+                          </svg>
+                        </button>
+                        <button
+                          type="button"
+                          class={`${
+                            givenRating === 5 || givenRating > 5
+                              ? "text-yellow-400"
+                              : "text-gray-300"
+                          } w-5 h-5 inline-flex justify-center items-center text-2xl rounded-full disabled:opacity-50 disabled:pointer-events-none dark:text-yellow-500`}
+                          onClick={() => {
+                            setgivenRating(5);
+                          }}
                         >
-                          <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
-                        </svg>
+                          <svg
+                            class="flex-shrink-0 w-5 h-5"
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            fill="currentColor"
+                            viewBox="0 0 16 16"
+                          >
+                            <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
+                          </svg>
+                        </button>
+                      </div>
+
+                      <button
+                        className="ml-8 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-white py-2 px-8 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600"
+                        onClick={rateProduct}
+                      >
+                        Submit
                       </button>
                     </div>
-
-                    <button className="ml-8 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-white py-2 px-8 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600">
-                      Submit
-                    </button>
                   </div>
-                </div>
+                )}
                 <div className="mr-40 ml-20">
                   <hr class="border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-5" />
                   {productReviews.length !== 0 ? (
-                    productReviews.map((review) => (
-                      <div class="mx-auto mb-2 flex rounded-xl border border-gray-100 p-4 text-left text-gray-600 border-gray-300 sm:p-8">
-                        <img
-                          class="mr-5 block h-8 w-8 max-w-full text-left align-middle sm:h-16 sm:w-16"
-                          src={defaultpic}
-                          alt="Profile Picture"
-                        />
-                        <div class="w-full text-left">
-                          <div class="mb-2 flex flex-col justify-between text-gray-600 sm:flex-row">
-                            <h3 class="font-medium">Diana Anderson</h3>
-                            <div class="bg-white px-4 sm:my-0 sm:ml-auto">
-                              <div class="flex h-8 items-center text-l font-bold text-blue-900">
-                                <svg
-                                  class="w-4 h-4 text-yellow-300 me-1"
-                                  aria-hidden="true"
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  fill="currentColor"
-                                  viewBox="0 0 22 20"
-                                >
-                                  <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
-                                </svg>
-                                <p class="ms-2 text-sm font-bold text-gray-900 dark:text-white">
-                                  {review.rating} / 5
-                                </p>
+                    productReviews.map((review) =>
+                      review.comment !== null ? (
+                        <div class="mx-auto mb-2 flex rounded-xl border border-gray-100 p-4 text-left text-gray-600 border-gray-300 sm:p-8">
+                          <img
+                            class="mr-5 block h-8 w-8 max-w-full text-left align-middle sm:h-16 sm:w-16"
+                            src={defaultpic}
+                            alt="Profile Picture"
+                          />
+                          <div class="w-full text-left">
+                            <div class="mb-2 flex flex-col justify-between text-gray-600 sm:flex-row">
+                              <h3 class="font-medium">{review.user_name}</h3>
+                              <div class="bg-white px-4 sm:my-0 sm:ml-auto">
+                                <div class="flex h-8 items-center text-l font-bold text-blue-900">
+                                  <svg
+                                    class="w-4 h-4 text-yellow-300 me-1"
+                                    aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="currentColor"
+                                    viewBox="0 0 22 20"
+                                  >
+                                    <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                  </svg>
+                                  <p class="ms-2 text-sm font-bold text-gray-900 dark:text-white">
+                                    {review.rating} / 5
+                                  </p>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                          <p class="text-sm">{review.comment}</p>
-                          <div class="mt-5  w-full flex items-center justify-between text-gray-500">
-                            <time class="text-xs " datetime="2022-11-13T20:00Z">
-                              {formatDate(review.created_at)}
-                            </time>
+                            <p class="text-sm">{review.comment}</p>
+                            <div class="mt-5  w-full flex items-center justify-between text-gray-500">
+                              <time
+                                class="text-xs "
+                                datetime="2022-11-13T20:00Z"
+                              >
+                                {formatDate(review.created_at)}
+                              </time>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))
+                      ) : (
+                        ""
+                      )
+                    )
                   ) : (
                     <div class="mx-auto flex rounded-xl border border-gray-100 p-4 text-left text-gray-600 border-gray-300 sm:p-8">
                       <div class="w-full text-left">
@@ -537,10 +619,7 @@ const ProductView = () => {
                 <div className="pb-10">
                   {relatedProducts.map((product) => (
                     <div className="mb-5">
-                      <ProductCard2
-                        key={product.products_id}
-                        productData={product}
-                      />
+                      <ProductCard2 key={product.id} productData={product} />
                     </div>
                   ))}
                 </div>

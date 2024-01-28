@@ -43,7 +43,31 @@
   .currency-symbol::before {
     content: var(--currency-symbol); 
 }
+.slideInFromLeft{
+  animation: slideInFromLeft 0.1s ease forwards;
+}
+.visible {
+  visibility: visible;
+  animation: slideInFromLeft 0.7s ease forwards;
+  /* Add other styles if needed */
+}
 
+.hidden {
+  visibility: hidden;
+  animation: slideOutFromLeft 0.5s ease forwards;
+  /* Add other styles if needed */
+}
+
+@keyframes slideInFromLeft {
+  0% {
+      opacity: 0;
+      transform: translateX(-100%);
+  }
+  100% {
+      opacity: 1;
+      transform: translateX(0);
+  }
+}
 .slideInFromTopAnim{
   animation: slideInFromTop 0.3s ease forwards;
 }

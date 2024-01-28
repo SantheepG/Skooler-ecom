@@ -5,28 +5,48 @@ import Footer from "../Footer";
 import { BsDashSquare, BsTrash3, BsPlusSquare } from "react-icons/bs";
 import CartRow from "./CartRow";
 import axios from "axios";
-
+import { useNavigate } from "react-router-dom";
 const Cart = () => {
-  const [userData, setUserData] = useState([]);
+  const navigate = useNavigate();
   const [cartItems, setCartItems] = useState([]);
   const [itemData, setItemData] = useState([]);
-  const [id, setid] = useState(userData.id);
+  //const [id, setid] = useState(userData.id);
   const [subtotal, setSubtotal] = useState(0);
   const [totalCost, settotalCost] = useState(0);
   const [voucher, setVoucher] = useState(0);
   const [dataChanged, setDataChanged] = useState(false);
+  const [userData, setUserData] = useState({
+    name: "",
+    student_id: "",
+    mobile_no: "",
+    email: "",
+    password: "",
+  });
+  useEffect(() => {
+    const storedUserData = JSON.parse(localStorage.getItem("user"));
+    if (storedUserData) {
+      setUserData(storedUserData);
+    } else {
+      navigate("/");
+    }
+  }, []);
 
   useEffect(() => {
     const fetchCart = async () => {
       try {
-        const user = JSON.parse(localStorage.getItem("user"));
-
-        const response = await axios.get(
-          `http://127.0.0.1:8000/api/cart/${user.id}`
-        );
-        if (response && response.data) {
-          setCartItems(response.data.cart);
-          //setSubtotal(response.data.subtotal);
+        const storedUserData = JSON.parse(localStorage.getItem("user"));
+        if (!storedUserData) {
+          navigate("/");
+        } else {
+          const response = await axios.get(
+            `http://127.0.0.1:8000/api/cart/${storedUserData.id}`
+          );
+          if (response && response.data) {
+            setCartItems(response.data.cart);
+            setSubtotal(response.data.subtotal);
+          } else {
+            console.log(response);
+          }
         }
       } catch (error) {
         console.log(error);
@@ -38,35 +58,20 @@ const Cart = () => {
     //calculateSubTotal();
   }, []);
 
-  useEffect(() => {
-    const fetchSubtotal = async () => {
-      const user = JSON.parse(localStorage.getItem("user"));
-
-      const response = await axios.get(
-        `http://127.0.0.1:8000/api/cart/fetchtotal/${user.id}`
-      );
-      if (response) {
-        setSubtotal(response.data.subtotal);
-        setDataChanged(false);
-      }
-    };
-    fetchSubtotal();
-  }, [dataChanged]);
+  const updateSubtotal = (newSubtotal) => {
+    setSubtotal(newSubtotal);
+  };
 
   const deleteItem = async (id) => {
     try {
       const response = await axios.delete(
-        `http://127.0.0.1:8000/api/cart/delete/${id}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+        `http://127.0.0.1:8000/api/cart/delete/${id}`
       );
 
-      if (response.status === 200) {
+      if (response) {
+        console.log(response);
+        setSubtotal(response.data.subtotal);
         setDataChanged(true);
-        console.log("Item deleted successfully");
         setCartItems((prevCartItems) =>
           prevCartItems.filter((item) => item.id !== id)
         );
@@ -139,6 +144,7 @@ const Cart = () => {
                             <CartRow
                               key={index}
                               product={item}
+                              subtotal={updateSubtotal}
                               qtyUpdate={(qty) => changeQty(index, qty)}
                               deleteItem={() => deleteItem(item.id)}
                             />
@@ -210,8 +216,25 @@ const Cart = () => {
                         </div>
                       </div>
                       <div class="summary-checkout">
-                        <button class="checkout-cta">
-                          Proceed to Checkout
+                        <button
+                          type="button"
+                          class="group inline-flex w-full items-center justify-center rounded-md bg-orange-500 px-4 py-2 text-md font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-gray-800"
+                        >
+                          Proceed to checkout
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="group-hover:ml-8 ml-4 h-6 w-6 transition-all"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            stroke-width="2"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              d="M13 7l5 5m0 0l-5 5m5-5H6"
+                            />
+                          </svg>
                         </button>
                       </div>
                     </div>

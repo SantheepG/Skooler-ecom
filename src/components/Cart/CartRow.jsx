@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useStore } from "react-redux";
 
-const CartRow = ({ product, qtyUpdate, deleteItem }) => {
+const CartRow = ({ product, qtyUpdate, deleteItem, subtotal }) => {
   const [qty, setQty] = useState(product.quantity);
   const [tprice, setTPrice] = useState(product.price);
 
@@ -19,6 +19,7 @@ const CartRow = ({ product, qtyUpdate, deleteItem }) => {
         );
         if (response) {
           console.log("qty changed");
+          subtotal(parseFloat(response.data.subtotal));
           //qtyUpdate(qty);
         } else {
           console.log("something went wrong");
@@ -45,6 +46,7 @@ const CartRow = ({ product, qtyUpdate, deleteItem }) => {
       );
       if (response) {
         console.log("qty changed");
+        subtotal(response.data.subtotal);
       } else {
         console.log("something went wrong");
         let oldQty = qty - 1;

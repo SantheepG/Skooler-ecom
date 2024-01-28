@@ -72,7 +72,7 @@ const Home = () => {
                   <Slideshow key={currentSlide} slide={slides[currentSlide]} />
                 </div>
 
-                <div class="">
+                <div class="mx-16">
                   <Extra />
                 </div>
               </div>
@@ -86,10 +86,6 @@ const Home = () => {
                 <div class="card">
                   <span className="home-heading ">Upcoming events</span>
                   <EventCom events={events} />
-                </div>
-                <div class="card">
-                  <h3>optional</h3>
-                  <p>Some text..</p>
                 </div>
               </div>
             </div>

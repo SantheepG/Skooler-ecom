@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-
+import { FetchUser } from "../../api/UserAPI";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./User.css";
 import Sidebar from "./Sidebar/Sidebar";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { setClicked } from "../../redux/action";
 import Profile from "./Profile/Profile";
 import Orders from "./Orders/Orders";
 import PaymentSettings from "./PaymentSettings/PaymentSettings";
@@ -17,37 +18,50 @@ import { Toaster, toast } from "react-hot-toast";
 import Navbar from "../Navbar/Navbar";
 import Footer from "../Footer";
 const User = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [reloadCom, setReloadComp] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [userData, setUserData] = useState({
-    name: "",
-    student_id: "",
-    mobile_no: "",
-    email: "",
-    password: "",
-  });
+  const [userData, setUserData] = useState(null);
 
   useEffect(() => {
-    const storedUserData = JSON.parse(localStorage.getItem("user"));
-    if (storedUserData) {
-      setUserData(storedUserData);
-    } else {
-      navigate("/");
-    }
-  }, []);
+    const fetchUserData = async () => {
+      try {
+        let tkn = localStorage.getItem("token");
+        if (tkn) {
+          const response = await FetchUser();
+          if (response.status === 200) {
+            console.log(response);
+            localStorage.setItem("user", JSON.stringify(response.data));
+            setUserData(response.data);
+            setReloadComp(false);
+          } else {
+          }
+        } else {
+          localStorage.clear();
+          navigate("/");
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchUserData();
+  }, [reloadCom]);
   const sideBarstate = useSelector((state) => state.sidebar);
   let componentToView;
 
   if (sideBarstate.profileClicked) {
-    componentToView = <Profile userData={userData} />;
+    componentToView = (
+      <Profile userData={userData} reload={() => setReloadComp(true)} />
+    );
   } else if (sideBarstate.ordersClicked) {
-    componentToView = <Orders />;
+    componentToView = <Orders userData={userData} />;
   } else if (sideBarstate.paymentsClicked) {
     componentToView = <PaymentSettings />;
   } else if (sideBarstate.complaintsClicked) {
-    componentToView = <Complaints />;
+    componentToView = <Complaints user={userData} />;
   } else if (sideBarstate.reviewsClicked) {
-    componentToView = <Reviews />;
+    componentToView = <Reviews user={userData} />;
   } else if (sideBarstate.vouchersClicked) {
     componentToView = <Vouchers />;
   } else if (sideBarstate.notificationsClicked) {
@@ -59,13 +73,15 @@ const User = () => {
         <div className="navbar-header-container">
           <Navbar />
         </div>
-        <div className="skooler-main-container">
-          <div className="content">
-            <div className="main-panel">
-              <div className="left-side">
-                <Sidebar />
+        <div className="skooler-main-container mt-16">
+          <div class="mx-4  max-w-screen-xl sm:mx-8 xl:mx-auto">
+            <h1 class="border-b py-6 text-2xl font-semibold">My Account</h1>
+            <div class="grid grid-cols-8 pt-3 pb-10 sm:grid-cols-10">
+              <Sidebar />
+
+              <div class="col-span-8 rounded-xl sm:bg-gray-50 sm:shadow">
+                {componentToView}
               </div>
-              <div className="right-side">{componentToView}</div>
             </div>
           </div>
         </div>

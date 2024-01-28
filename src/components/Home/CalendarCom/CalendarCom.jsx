@@ -79,15 +79,6 @@ const CalendarCom = ({ events }) => {
       ) {
         setSliderEvents((prevEvents) => [...prevEvents, events[i].event_info]);
       }
-      if (
-        events[i].payment_deadline.split(" ")[0] ===
-        formatDate(value).split(" ")[0]
-      ) {
-        let deadline_info = `Payment deadline (${
-          events[i].payment_deadline.split(" ")[1]
-        }) - \n ${events[i].event_info} `;
-        setSliderEvents((prevEvents) => [...prevEvents, deadline_info]);
-      }
     }
     setDate(value);
     setSliderIsHidden(!sliderIsHidden);
@@ -99,9 +90,7 @@ const CalendarCom = ({ events }) => {
       for (let i = 0; i < eventsCount; i++) {
         if (
           events[i].event_datetime.split(" ")[0] ===
-            formatDate(date).split(" ")[0] ||
-          events[i].payment_deadline.split(" ")[0] ===
-            formatDate(date).split(" ")[0]
+          formatDate(date).split(" ")[0]
         ) {
           return (
             <div className="custom-tile-content">

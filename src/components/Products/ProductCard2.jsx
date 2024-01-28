@@ -32,7 +32,11 @@ const ProductCard2 = ({ productData }) => {
   const handleItemClick = (item) => {
     if (!navBarstate[item]) {
       dispatch(setClicked(item, true));
-      navigate(`/product/${productData.products_id}/${avgRating}`);
+      navigate(`/product/${productData.id}`);
+    } else {
+      dispatch(setClicked(item, false));
+      dispatch(setClicked(item, true));
+      navigate(`/product/${productData.id}`);
     }
   };
 
@@ -45,13 +49,15 @@ const ProductCard2 = ({ productData }) => {
           "http://127.0.0.1:8000/api/cart/add",
           {
             user_id: userData.id,
-            product_id: productData.products_id,
+            product_id: productData.id,
             product_name: productData.name,
             quantity: 1,
             price: productData.discounted_price
               ? productData.discounted_price
               : productData.price,
-            totalPrice: productData.price,
+            totalPrice: productData.discounted_price
+              ? productData.discounted_price
+              : productData.price,
           },
           {
             headers: {
@@ -71,27 +77,6 @@ const ProductCard2 = ({ productData }) => {
       }
     }
   };
-
-  useEffect(() => {
-    const fetchAvgRating = async () => {
-      try {
-        const response = await axios.post(
-          "http://127.0.0.1:8000/api/avgrating",
-          { product_id: productData.products_id },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        setavgRating(response.data.avg_rating);
-      } catch (error) {
-        console.log("Error:", error);
-      }
-    };
-    fetchAvgRating();
-  }, []);
 
   return (
     <React.Fragment>
@@ -117,7 +102,19 @@ const ProductCard2 = ({ productData }) => {
         <div class="mt-4 px-5 pb-5">
           <a href="#">
             <h5 class="text-l tracking-tight text-slate-900">
-              {productData.name}
+              {productData.name}{" "}
+              {productData.size !== null ? (
+                <span className="text-sm text-gray-600">
+                  {" "}
+                  - {productData.size}
+                </span>
+              ) : null}
+              {productData.color !== null ? (
+                <span className="text-sm text-gray-600">
+                  {" "}
+                  | {productData.color}
+                </span>
+              ) : null}
             </h5>
           </a>
           <div class="mt-2 mb-5 flex items-center justify-between">
@@ -153,32 +150,58 @@ const ProductCard2 = ({ productData }) => {
 
             <div class="flex items-center">
               <span class="mr-2 ml-3 rounded bg-yellow-200 px-2.5 py-0.5 text-xs font-semibold">
-                <span className="slideInFromTopAnim">{avgRating}</span>
+                <span className="slideInFromTopAnim">
+                  {productData.avg_rating}
+                </span>
                 <span>/5.0</span>
               </span>
             </div>
           </div>
-          <button
-            href="#"
-            class="flex w-full items-center justify-center rounded-md bg-gray-600 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-300"
-            onClick={addToCart}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="mr-2 h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              stroke-width="2"
+          {productData.stock !== 0 ? (
+            <button
+              href="#"
+              class="flex w-full items-center justify-center rounded-md bg-gray-600 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-300"
+              onClick={addToCart}
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
-              />
-            </svg>
-            <span className="slideInFromTopAnim">{addText}</span>
-          </button>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="mr-2 h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+                />
+              </svg>
+              <span className="slideInFromTopAnim">{addText}</span>
+            </button>
+          ) : (
+            <button
+              href="#"
+              disabled
+              class="disabled:bg-gray-500 flex w-full items-center justify-center rounded-md bg-gray-600 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-300"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="mr-2  w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+                />
+              </svg>
+              <span className="slideInFromTopAnim">Out of stock</span>
+            </button>
+          )}
         </div>
       </div>
     </React.Fragment>

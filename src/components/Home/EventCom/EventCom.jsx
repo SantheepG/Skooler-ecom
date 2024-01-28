@@ -1,8 +1,9 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./EventCom.css";
 import "../EventSingle/EventSingle.css";
 const EventCom = ({ events }) => {
   const containerRef = useRef(null);
+  const [scroll, setScroll] = useState(false);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -29,30 +30,48 @@ const EventCom = ({ events }) => {
 
   return (
     <React.Fragment>
-      <div className="event-com-scrollable" ref={containerRef}>
-        {events.map((event) => (
-          <div class="event-com-single" key={event.id}>
-            <div class="event-single-card">
-              <h3 class="card__title">{event.name}</h3>
-              <p class="card__content">{event.event_info}</p>
-              <div class="card__date">{event.event_datetime}</div>
-              <div class="card__arrow">
+      <div
+        className="event-com-scrollable"
+        ref={containerRef}
+        onScroll={() => setScroll(true)}
+      >
+        <ol class="relative border-s border-gray-200 dark:border-gray-700">
+          {events.map((event) => (
+            <li class="mb-10 ms-4" key={event.id}>
+              <div class="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -start-1.5 border border-white dark:border-gray-900 dark:bg-gray-700"></div>
+              <time class="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
+                {event.event_datetime}
+              </time>
+              <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                {event.name}
+              </h3>
+              <p class="mb-4 text-base font-normal text-gray-500 dark:text-gray-400">
+                {event.event_info}
+              </p>
+              <a
+                href="#"
+                class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:outline-none focus:ring-gray-200 focus:text-blue-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-gray-700"
+              >
+                View
                 <svg
+                  class="w-3 h-3 ms-2 rtl:rotate-180"
+                  aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
-                  viewBox="0 0 24 24"
-                  height="15"
-                  width="15"
+                  viewBox="0 0 14 10"
                 >
                   <path
-                    fill="#fff"
-                    d="M13.4697 17.9697C13.1768 18.2626 13.1768 18.7374 13.4697 19.0303C13.7626 19.3232 14.2374 19.3232 14.5303 19.0303L20.3232 13.2374C21.0066 12.554 21.0066 11.446 20.3232 10.7626L14.5303 4.96967C14.2374 4.67678 13.7626 4.67678 13.4697 4.96967C13.1768 5.26256 13.1768 5.73744 13.4697 6.03033L18.6893 11.25H4C3.58579 11.25 3.25 11.5858 3.25 12C3.25 12.4142 3.58579 12.75 4 12.75H18.6893L13.4697 17.9697Z"
-                  ></path>
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M1 5h12m0 0L9 1m4 4L9 9"
+                  />
                 </svg>
-              </div>
-            </div>
-          </div>
-        ))}
+              </a>
+            </li>
+          ))}
+        </ol>
       </div>
     </React.Fragment>
   );

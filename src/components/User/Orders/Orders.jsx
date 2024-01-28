@@ -3,281 +3,279 @@ import "./Orders.css";
 import { BsDashSquare, BsTrash3, BsPlusSquare } from "react-icons/bs";
 import { PiSortAscendingBold } from "react-icons/pi";
 import { Toaster, toast } from "react-hot-toast";
-import { FaDownload } from "react-icons/fa6";
-import html2pdf from "html2pdf.js";
-const Orders = () => {
+import { fetchOrders } from "../../../api/UserAPI";
+import OrderRow from "./OrderRow";
+import InvoiceView from "./InvoiceView";
+import BookingRow from "./BookingRow";
+import ReceiptView from "./ReceiptView";
+import ReportView from "./ReportView";
+
+const Orders = ({ userData }) => {
   const [showSortDropdown, setShowSortDropdown] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isInvoiceOpen, setIsInvoiceOpen] = useState(false);
+  const [isReceiptOpen, setIsReceiptOpen] = useState(false);
+  const [currentOrder, setCurrentOrder] = useState(null);
+  const [currentBooking, setCurrentBooking] = useState(null);
+  const [ordersClicked, settoReviewClicked] = useState(true);
+  const [bookingsClicked, setReviewedClicked] = useState(false);
+  const [isReportOpen, setIsReportOpen] = useState(false);
+  const [orders, setOrders] = useState([]);
+  const [bookings, setBookings] = useState([]);
 
-  const viewModal = () => {
-    setIsModalOpen(!isModalOpen);
-  };
+  useEffect(() => {
+    const fetchData = async () => {
+      if (userData !== null) {
+        try {
+          const response = await fetchOrders(userData.id);
+          console.group(response);
+          setOrders(response.data.orders);
+          setBookings(response.data.bookings);
+        } catch (error) {
+          console.error(error.message);
+        }
+      }
+    };
+    fetchData();
+  }, []);
 
-  const handleOutsideClick = (event) => {
-    if (event.target.className === "modal") {
-      setIsModalOpen(false);
+  const headerClickHandler = () => {
+    if (ordersClicked) {
+      setReviewedClicked(true);
+      settoReviewClicked(false);
+    } else {
+      setReviewedClicked(false);
+      settoReviewClicked(true);
     }
   };
-  const toggleSortDropdown = () => {
-    setShowSortDropdown(!showSortDropdown);
+
+  const sort = (num) => {
+    if (num === 0) {
+      let sortedBookings = [...bookings].sort(
+        (a, b) => new Date(b.created_at) - new Date(a.created_at)
+      );
+      let sortedOrders = [...orders].sort(
+        (a, b) => new Date(b.created_at) - new Date(a.created_at)
+      );
+      setOrders(sortedOrders);
+      setBookings(sortedBookings);
+    } else if (num === 1) {
+      let sortedBookings = [...bookings].sort(
+        (a, b) => new Date(a.created_at) - new Date(b.created_at)
+      );
+      let sortedOrders = [...orders].sort(
+        (a, b) => new Date(a.created_at) - new Date(b.created_at)
+      );
+      setOrders(sortedOrders);
+      setBookings(sortedBookings);
+    }
   };
-
-  const downloadInvoice = () => {
-    const content = document.querySelector(".invoice");
-
-    html2pdf(content, {
-      margin: 10,
-      filename: "invoice.pdf",
-      image: { type: "jpeg", quality: 0.98 },
-      html2canvas: { scale: 2 },
-      jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-    });
-  };
-
   return (
-    <React.Fragment>
-      <Toaster className="notifier" />
-      {isModalOpen && (
-        <div className="modal" onClick={handleOutsideClick}>
-          <Toaster className="notifier" />
-          <div
-            className="h-100 mt-24 overflow-auto"
-            onClick={handleOutsideClick}
-          >
-            <div class="bg-white rounded-lg shadow-lg px-8 py-10 max-w-xl mx-auto">
-              <div class="flex items-center justify-between mb-8">
-                <div class="flex items-center">
-                  <div class="text-gray-700 font-semibold text-lg">Skooler</div>
-                </div>
-                <div class="flex items-center justify-betweentext-gray-700">
-                  <div
-                    class="download flex items-center justify-between mr-5 cursor-pointer text-gray-500 hover:text-gray-800"
-                    onClick={downloadInvoice}
-                  >
-                    <FaDownload />
-                  </div>
-                  <div>
-                    <span className="close" onClick={viewModal}>
-                      &times;
-                    </span>
-                  </div>
-                </div>
+    userData !== null && (
+      <React.Fragment>
+        <Toaster className="notifier" />
+        {isModalOpen && isInvoiceOpen && (
+          <InvoiceView
+            user={userData}
+            order={currentOrder}
+            closeModal={() => {
+              setIsModalOpen(!isModalOpen);
+              setIsInvoiceOpen(!isInvoiceOpen);
+            }}
+          />
+        )}
+        {isModalOpen && isReceiptOpen && (
+          <ReceiptView
+            user={userData}
+            booking={currentBooking}
+            closeModal={() => {
+              setIsModalOpen(!isModalOpen);
+              setIsReceiptOpen(!isReceiptOpen);
+            }}
+          />
+        )}
+        {isModalOpen && isReportOpen && (
+          <ReportView
+            user={userData}
+            order={currentOrder}
+            closeModal={() => {
+              setIsModalOpen(!isModalOpen);
+              setIsReportOpen(!isReportOpen);
+            }}
+          />
+        )}
+        <div class="col-span-8 ViewContent overflow-hidden rounded-xl sm:bg-gray-50 sm:px-8 ">
+          <div className="flex mt-4 mb-4 justify-between text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700">
+            <ul className="flex flex-wrap -mb-px">
+              <li className="me-2">
+                <a
+                  href="#"
+                  className={`${
+                    ordersClicked
+                      ? "text-blue-600 border-b-2 border-blue-600"
+                      : ""
+                  } inline-block p-4 rounded-t-lg dark:text-blue-500 dark:border-blue-500 hover:text-blue-600`}
+                  onClick={() => headerClickHandler()}
+                >
+                  Orders
+                </a>
+              </li>
+              <li class="me-2">
+                <a
+                  href="#"
+                  className={`${
+                    bookingsClicked
+                      ? "text-blue-600 border-b-2 border-blue-600"
+                      : ""
+                  } inline-block p-4 rounded-t-lg dark:text-blue-500 dark:border-blue-500 hover:text-blue-600`}
+                  onClick={() => headerClickHandler()}
+                >
+                  Bookings
+                </a>
+              </li>
+            </ul>
+
+            <button
+              type="button"
+              data-dropdown-toggle="cart-dropdown"
+              class="p-2 mr-1 flex justify-end text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
+              onClick={() => setShowSortDropdown(!showSortDropdown)}
+            >
+              <span class="sr-only">View sort</span>
+              <span className="text-2xl">
+                <PiSortAscendingBold />
+              </span>
+            </button>
+            {showSortDropdown && (
+              <div className="absolute right-0 mr-32 mt-12 justify-end bg-white border SlideDown">
+                <button
+                  class="font-medium text-gray-900 block px-4 py-2 text-sm hover:text-orange-400"
+                  role="menuitem"
+                  tabindex="-1"
+                  id="menu-item-2"
+                  onClick={() => {
+                    setShowSortDropdown(!showSortDropdown);
+                    sort(0);
+                  }}
+                >
+                  Newest
+                </button>
+                <button
+                  class="font-medium text-gray-900 block px-4 py-2 text-sm hover:text-orange-400"
+                  role="menuitem"
+                  tabindex="-1"
+                  id="menu-item-3"
+                  onClick={() => {
+                    setShowSortDropdown(!showSortDropdown);
+                    sort(1);
+                  }}
+                >
+                  Earliest
+                </button>
               </div>
-              <div className="invoice ">
-                <div class="flex items-center justify-between mb-8">
-                  <div class="flex items-center">
-                    <div class="text-gray-700 font-semibold text-lg">
-                      School logo
-                    </div>
-                  </div>
-                  <div class="text-gray-700">
-                    <div class="font-bold text-xl mb-2">INVOICE</div>
-                    <div class="text-sm">Date: 01/05/2023</div>
-                    <div class="text-sm">Invoice #: INV12345</div>
-                  </div>
-                </div>
-                <div class="border-b-2 border-gray-300 pb-8 mb-8">
-                  <h2 class="text-2xl font-bold mb-4">Bill To:</h2>
-                  <div class="text-gray-700 mb-2">John Doe</div>
-                  <div class="text-gray-700 mb-2">123 Main St.</div>
-                  <div class="text-gray-700 mb-2">Anytown, USA 12345</div>
-                  <div class="text-gray-700">johndoe@example.com</div>
-                </div>
-                <table class="w-full text-left mb-8">
-                  <thead>
-                    <tr>
-                      <th class="text-gray-700 font-bold uppercase py-2">
-                        Description
-                      </th>
-                      <th class="text-gray-700 font-bold uppercase py-2">
-                        Quantity
-                      </th>
-                      <th class="text-gray-700 font-bold uppercase py-2">
+            )}
+          </div>
+
+          <div class="overflow-hidden rounded-xl bg-white shadow lg:px-4">
+            <table class="min-w-full border-collapse border-spacing-y-2 border-spacing-x-2">
+              {ordersClicked ? (
+                <>
+                  <thead class="border-b md:hidden sm:hidden lg:table-header-group">
+                    <tr class="">
+                      <td class="whitespace-normal py-4 text-sm font-semibold text-gray-800 sm:px-3">
+                        Order Date
+                      </td>
+
+                      <td class="whitespace-normal py-4 text-sm font-medium text-gray-500 sm:px-3">
+                        Order type
+                      </td>
+                      <td class="whitespace-normal py-4 text-sm font-medium text-gray-500 sm:px-3">
+                        Products
+                      </td>
+
+                      <td class="whitespace-normal py-4 text-sm font-medium text-gray-500 sm:px-3">
                         Price
-                      </th>
-                      <th class="text-gray-700 font-bold uppercase py-2">
-                        Total
-                      </th>
+                      </td>
+
+                      <td class="whitespace-normal py-4 text-sm font-medium text-gray-500 sm:px-3">
+                        Status
+                      </td>
                     </tr>
                   </thead>
-                  <tbody>
-                    <tr>
-                      <td class="py-4 text-gray-700">Product 1</td>
-                      <td class="py-4 text-gray-700">1</td>
-                      <td class="py-4 text-gray-700">$100.00</td>
-                      <td class="py-4 text-gray-700">$100.00</td>
-                    </tr>
-                    <tr>
-                      <td class="py-4 text-gray-700">Product 2</td>
-                      <td class="py-4 text-gray-700">2</td>
-                      <td class="py-4 text-gray-700">$50.00</td>
-                      <td class="py-4 text-gray-700">$100.00</td>
-                    </tr>
+                  <tbody class="lg:border-gray-300">
+                    {orders.length !== 0 ? (
+                      orders.map((order, index) => (
+                        <OrderRow
+                          key={index}
+                          user={userData}
+                          order={order}
+                          reportClicked={() => {
+                            setCurrentOrder(order);
+                            setIsModalOpen(!isModalOpen);
+                            setIsReportOpen(!isReportOpen);
+                          }}
+                          invoiceClicked={() => {
+                            setCurrentOrder(order);
+                            setIsInvoiceOpen(!isInvoiceOpen);
+                            setIsModalOpen(!isModalOpen);
+                          }}
+                        />
+                      ))
+                    ) : (
+                      <div className="order-id">No orders available</div>
+                    )}
                   </tbody>
-                </table>
-                <div class="flex justify-end mb-8">
-                  <div class="text-gray-700 mr-2">Subtotal:</div>
-                  <div class="text-gray-700">$425.00</div>
-                </div>
-                <div class="text-right mb-8">Delivery charge : 25.50</div>
-                <div class="flex justify-end mb-8">
-                  <div class="text-gray-700 mr-2">Total:</div>
-                  <div class="text-gray-700 font-bold text-xl">$450.50</div>
-                </div>
-                <div class="border-t-2 border-gray-300 pt-8 mb-8 text-gray-500">
-                  This is a system generated invoice
-                </div>
-              </div>
-            </div>
+                </>
+              ) : (
+                <>
+                  <thead class="border-b md:hidden sm:hidden lg:table-header-group">
+                    <tr class="">
+                      <td class="whitespace-normal py-4 text-sm font-semibold text-gray-800 sm:px-3">
+                        Booking Date
+                      </td>
+
+                      <td class="whitespace-normal py-4 text-sm font-medium text-gray-500 sm:px-3">
+                        Tickets
+                      </td>
+                      <td class="whitespace-normal py-4 text-sm font-medium text-gray-500 sm:px-3">
+                        Event
+                      </td>
+
+                      <td class="whitespace-normal py-4 text-sm font-medium text-gray-500 sm:px-3">
+                        Price
+                      </td>
+
+                      <td class="whitespace-normal py-4 text-sm font-medium text-gray-500 sm:px-3">
+                        Payment method
+                      </td>
+                    </tr>
+                  </thead>
+                  <tbody class="lg:border-gray-300">
+                    {bookings.length !== 0 ? (
+                      bookings.map((booking, index) => (
+                        <BookingRow
+                          key={index}
+                          user={userData}
+                          booking={booking}
+                          receiptClicked={() => {
+                            setCurrentBooking(booking);
+                            setIsReceiptOpen(!isReceiptOpen);
+                            setIsModalOpen(!isModalOpen);
+                          }}
+                        />
+                      ))
+                    ) : (
+                      <div className="order-id">No bookings available</div>
+                    )}
+                  </tbody>
+                </>
+              )}
+            </table>
           </div>
+          <div className="ordered-items"></div>
         </div>
-      )}
-      <div className="orders-component">
-        <div className="orders-container">
-          <div className="list-header">
-            <div className="products-header">
-              <div className="flex justify-between w-full">
-                <div className=" text-xl font-semibold ml-10">
-                  <h2 className="text-gray-600">My orders</h2>
-                </div>
-                <div className="text-2xl mr-10">
-                  <button
-                    type="button"
-                    data-dropdown-toggle="cart-dropdown"
-                    class="p-2 mr-1 text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
-                    onClick={() => setShowSortDropdown(!showSortDropdown)}
-                  >
-                    <span class="sr-only">View sort</span>
-                    <span className="text-2xl">
-                      <PiSortAscendingBold />
-                    </span>
-                  </button>
-                  {showSortDropdown && (
-                    <div className="Sort-dropdown-content">
-                      <ul>
-                        <li>Recent</li>
-                        <li>Earliest</li>
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-            <hr class="border-gray-300 mb-5 mt-5" />
-          </div>
-          <div className="ordered-items">
-            <div className="ordered-item">
-              <div className="item-header">
-                <div className="order-info">
-                  <div className="order-id">
-                    Order ID : <span>#EA55565</span>
-                  </div>
-                  <div className="ordered-datetime">
-                    Placed on: <span>14:34, 09th Dec, 2023</span>
-                  </div>
-                </div>
-                <div className="order-view">
-                  <span>
-                    <a
-                      href="#"
-                      className="user-section-btn order-invoice-btn"
-                      onClick={viewModal}
-                    >
-                      Invoice
-                    </a>
-                  </span>
-                  <span></span>
-                </div>
-              </div>
-              <div class="item">
-                <div class="item-column image">
-                  <img alt="img" />
-                </div>
-
-                <div class="item-column description">
-                  <span>Common P</span>
-                  <span>Bball High</span>
-                  <span>White</span>
-                </div>
-
-                <div class="">
-                  <span className="delivery-status-outer">status :</span>
-                  <span className="delivery-status">Pending</span>
-                </div>
-
-                <div class="item-column product-price">
-                  <div>
-                    <span className="delivery-status-outer">Paid : </span>
-                    <span>
-                      <span className="currency">$</span>
-                      <span>549</span>
-                    </span>
-                  </div>
-                </div>
-                <div>
-                  <span className="delivery-status-outer">
-                    Payment method :
-                  </span>
-                  <span> Visa Card</span>
-                </div>
-              </div>
-            </div>
-            <div className="ordered-item">
-              <div className="item-header">
-                <div className="order-info">
-                  <div className="order-id">
-                    Order ID : <span>#EA512134</span>
-                  </div>
-                  <div className="ordered-datetime">
-                    Placed on: <span>15:34, 10th Dec, 2023</span>
-                  </div>
-                </div>
-                <div className="order-view">
-                  <span>
-                    <a href="#" className="user-section-btn order-invoice-btn">
-                      Invoice
-                    </a>
-                  </span>
-                  <span></span>
-                </div>
-              </div>
-              <div class="item">
-                <div class="item-column image">
-                  <img alt="img" />
-                </div>
-
-                <div class="item-column description">
-                  <span>Common P</span>
-                  <span>Bball High</span>
-                  <span>White</span>
-                </div>
-
-                <div class="">
-                  <span className="delivery-status-outer">status :</span>
-                  <span className="delivery-status delivered">Delivered</span>
-                </div>
-
-                <div class="item-column product-price">
-                  <div>
-                    <span className="delivery-status-outer">Paid : </span>
-                    <span>
-                      <span className="currency">$</span>
-                      <span>549</span>
-                    </span>
-                  </div>
-                </div>
-                <div>
-                  <span className="delivery-status-outer">
-                    Payment method :
-                  </span>
-                  <span> Visa Card</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </React.Fragment>
+      </React.Fragment>
+    )
   );
 };
 

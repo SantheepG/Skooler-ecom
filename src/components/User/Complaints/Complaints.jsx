@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Complaints.css";
+import { fetchComplaints } from "../../../api/UserAPI";
 import {
   BsDashSquare,
   BsTrash3,
@@ -8,58 +9,68 @@ import {
   BsTrashFill,
 } from "react-icons/bs";
 import { PiSortAscendingBold } from "react-icons/pi";
-const Complaints = () => {
+import ComplaintRow from "./ComplaintRow";
+const Complaints = ({ user }) => {
   const [showSortDropdown, setShowSortDropdown] = useState(false);
+  const [complaints, setComplaints] = useState([]);
+
+  useEffect(() => {
+    const fetchUserComplaints = async () => {
+      if (user !== null) {
+        let response = await fetchComplaints(user.id);
+        if (response) {
+          setComplaints(response.data.complaints);
+        } else {
+          console.log("error");
+        }
+      }
+    };
+
+    fetchUserComplaints();
+  }, []);
 
   return (
     <React.Fragment>
-      <div className="complaints-component">
-        <div className="list-header">
-          <div className="products-header">
-            <div className="flex justify-between w-full">
-              <div className=" text-xl font-semibold ml-10">
-                <h2 className="text-gray-600">Complaints</h2>
-              </div>
-            </div>
-          </div>
-          <hr class="border-gray-300 mb-5 mt-5" />
+      {user !== null && (
+        <div class="overflow-hidden ViewContent rounded-xl bg-gray-50 shadow">
+          <table class="min-w-full border-collapse border-spacing-y-2 border-spacing-x-2">
+            <thead class="border-b md:hidden sm:hidden lg:table-header-group">
+              <tr class="">
+                <td class="whitespace-normal py-4 text-sm font-semibold text-gray-800 sm:px-3">
+                  Lodged on
+                </td>
+
+                <td class="whitespace-normal py-4 text-sm font-medium text-gray-500 sm:px-3">
+                  Complaint ID
+                </td>
+                <td class="whitespace-normal py-4 text-sm font-medium text-gray-500 sm:px-3">
+                  Product
+                </td>
+
+                <td class="whitespace-normal py-4 text-sm font-medium text-gray-500 sm:px-3">
+                  complaint
+                </td>
+
+                <td class="whitespace-normal py-4 text-sm font-medium text-gray-500 sm:px-3">
+                  Status
+                </td>
+              </tr>
+            </thead>
+
+            <tbody class="lg:border-gray-300">
+              {complaints.length !== 0 ? (
+                complaints.map((complaint, index) => (
+                  <ComplaintRow key={index} complaint={complaint} />
+                ))
+              ) : (
+                <tr class="bg-white w-full border rounded">
+                  Nothing available
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
-        <div className="ordered-items">
-          <div className="ordered-item">
-            <div className="item-header">
-              <div className="order-info">
-                <div className="order-id">Order ID : </div>
-                <div className="lodged-datetime">
-                  <span>Lodged on </span>
-                  <span className="lodged-datetime-inner"></span>
-                </div>
-              </div>
-              <div className="complaint-delete">
-                <span class="delete-btn">
-                  <BsTrash3 />
-                </span>
-
-                <span></span>
-              </div>
-            </div>
-            <div class="complained-item">
-              <div class="item-column image">
-                <img alt="img" />
-              </div>
-
-              <div class="item-column description">
-                Bball
-                Highdfsvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-              </div>
-
-              <div class="complaint-status">
-                <span className="complaint-status-outer">status :</span>
-                <span className="complaint-status-inner">Pending</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      )}
     </React.Fragment>
   );
 };

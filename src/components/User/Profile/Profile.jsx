@@ -3,15 +3,25 @@ import "./Profile.css";
 import defaultpic from "../../assets/default-avatar.png";
 import { Toaster, toast } from "react-hot-toast";
 import axios from "axios";
+import {
+  UpdateAddress,
+  UpdateName,
+  UpdatePassword,
+} from "../../../api/UserAPI";
 
-const Profile = ({ userData }) => {
+const Profile = ({ userData, reload }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState({
-    id: userData.id,
-    name: userData.name,
-    email: userData.email,
-    mobile_no: userData.mobile_no,
-  });
+  const [viewResetPwd, setViewResetPwd] = useState(false);
+  const [nameChangeClicked, setNameChangeClicked] = useState(false);
+  const [addressChangeClicked, setAddressChangeClicked] = useState(false);
+  const [viewAvatarChange, setViewAvatarChange] = useState(false);
+  const [formData, setFormData] = useState(null);
+  const [address1, setAddress1] = useState("");
+  const [address2, setAddress2] = useState("");
+  const [address3, setAddress3] = useState("");
+  const [currentPwd, setCurrentPwd] = useState("");
+  const [newPwd, setNewPwd] = useState("");
+  const [updateData, setUpdateData] = useState(null);
   const viewModal = () => {
     setIsModalOpen(!isModalOpen);
   };
@@ -68,208 +78,395 @@ const Profile = ({ userData }) => {
     }
   };
 
-  useEffect(() => {
-    //
-    const UpdateProfile = async () => {
-      try {
-        const response = await axios.get("events");
-        //setEvents(response.data.events);
-      } catch (error) {
-        console.error("Fetch error: ", error);
+  const updateName = async () => {
+    try {
+      if (updateData.first_name !== "" && updateData.last_name !== null) {
+        const response = await UpdateName({
+          id: userData.id,
+          first_name: updateData.first_name,
+          last_name: updateData.last_name,
+        });
+        if (response.status === 200) {
+          toast.success("Updated");
+          setNameChangeClicked(!nameChangeClicked);
+          reload();
+        } else {
+          toast.error("Something went wrong");
+        }
+      } else {
+        toast.error("Fields are empty");
       }
-    };
-    //UpdateProfile();
-  }, []);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const updateAddress = async () => {
+    try {
+      if (address1 !== "" || address2 !== "" || address3 !== "") {
+        let address = JSON.stringify({
+          address1: address1,
+          address2: address2,
+          address3: address3,
+        });
+        const response = await UpdateAddress({
+          id: userData.id,
+          address: address,
+        });
+
+        if (response.status === 200) {
+          toast.success("Updated");
+          setAddressChangeClicked(!addressChangeClicked);
+          reload();
+        } else {
+          toast.error("Something went wrong");
+        }
+      } else {
+        toast.error("Fields are empty");
+      }
+    } catch (error) {}
+  };
+
+  const updatePwd = async () => {
+    try {
+      if (currentPwd !== "" && newPwd !== "") {
+        let data = {
+          id: userData.id,
+          current_password: currentPwd,
+          new_password: newPwd,
+        };
+        const response = await UpdatePassword(data);
+
+        if (response.status === 200) {
+          toast.success("Updated");
+          setViewResetPwd(!viewResetPwd);
+          reload();
+        } else {
+          toast.error("Passwords didn't match ");
+        }
+      } else {
+        toast.error("Fields are empty");
+      }
+    } catch (error) {
+      toast.error("Something went wrong");
+    }
+  };
+  useEffect(() => {
+    if (userData !== null) {
+      setUpdateData(userData);
+      if (userData.address !== null) {
+        let address = JSON.parse(userData.address);
+        setAddress1(address.address1);
+        setAddress2(address.address2);
+        setAddress3(address.address3);
+      }
+    }
+  }, [userData]);
 
   return (
     <React.Fragment>
-      <div>
-        <Toaster className="notifier" />
-        {isModalOpen && (
-          <div className="modal" onClick={handleOutsideClick}>
-            <Toaster className="notifier" />
-            <div className="modal-content">
-              <div class="form-style-10">
-                <span className="close" onClick={viewModal}>
-                  &times;
-                </span>
-                <div className="profile-section section-title">
-                  Update details
-                </div>
-
-                <form className="parallel-form">
-                  <div class="inner-wrap">
-                    <label>
-                      Your Full Name{" "}
-                      <input
-                        type="text"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleInputChange}
-                      />
-                    </label>
-                    <label>
-                      Address{" "}
-                      <textarea
-                        name="address"
-                        onChange={handleInputChange}
-                      ></textarea>
-                    </label>
-                  </div>
-
-                  <div class="inner-wrap">
-                    <label>
-                      Email Address
-                      <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                      />
-                    </label>
-                    <label>
-                      Phone Number{" "}
-                      <input
-                        type="text"
-                        name="mobile_no"
-                        value={userData.mobile_no}
-                        disabled
-                      />
-                    </label>
-                  </div>
-
-                  <div class="button-section">
-                    <button className="btn" onClick={UpdateProfileInfo}>
-                      Update
-                    </button>
-                    <button onClick={viewModal}>Cancel</button>
-                  </div>
-                </form>
-              </div>
-            </div>
+      {updateData && (
+        <div class="col-span-8 overflow-hidden rounded-xl sm:bg-gray-50 sm:px-8 sm:shadow ViewContent">
+          <Toaster className="notifier" />
+          <div class="pt-4">
+            <h1 class="py-2 text-2xl font-semibold">Profile</h1>
+            <p class="font- text-slate-600"></p>
           </div>
-        )}
-      </div>
-      <div className="profile-component">
-        <div className="profile-content">
-          <div className="ml-5">
-            <div class="mb-4 w-64 h-64 ml-10 md:mr-10 md:mb-0 border rounded-full">
-              <img
-                class="h-50  object-cover md:w-50 border  rounded-full"
-                src={defaultpic}
-                alt=""
-              />
-            </div>
-            <div class="bg-white mx-auto mt-5 flex max-w-xs flex-col items-center rounded-2xl border px-4 py-4 text-center md:max-w-lg md:flex-row md:items-start md:text-left">
-              <div class="">
-                <div class="flex space-x-4">
-                  <div class="flex flex-col items-center rounded-xl bg-gray-100 px-4 py-2 ml-2">
-                    <p class="text-sm font-medium text-gray-500">Purchases</p>
-                    <p class="text-3xl font-medium text-gray-600">0</p>
-                  </div>
-                  <div class="flex flex-col items-center rounded-xl bg-gray-100 px-4 py-2">
-                    <p class="text-sm font-medium text-gray-500">Reviews</p>
-                    <p class="text-3xl font-medium text-gray-600">0</p>
-                  </div>
-                  <div class="flex flex-col items-center rounded-xl bg-gray-100 px-4 py-2">
-                    <p class="text-sm font-medium text-gray-500">Complaints</p>
-                    <p class="text-3xl font-medium text-gray-600">0</p>
-                  </div>
-                  <div class=""></div>
-                </div>
-                <div class="mb-3"></div>
-                <div class="flex space-x-2">
-                  <button class="w-full rounded-lg border-2 border-orange-200 bg-white px-4 py-2 font-medium text-gray-500">
-                    Update picture
-                  </button>
-                </div>
-              </div>
-            </div>
+          <hr class="mt-4 mb-8" />
+          <p class="py-2 text-xl font-semibold">Personal</p>
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+            <p class="text-gray-600">
+              Name :{" "}
+              <strong>
+                {updateData.first_name + " "}
+                {updateData.last_name !== null ? updateData.last_name : ""}
+              </strong>
+            </p>
+
+            <button
+              class="inline-flex text-sm font-semibold text-blue-600 underline decoration-2"
+              onClick={() => {
+                setNameChangeClicked(!nameChangeClicked);
+                setAddressChangeClicked(false);
+                setViewResetPwd(false);
+                setViewAvatarChange(false);
+              }}
+            >
+              Change
+            </button>
           </div>
-          <div className="ml-5 mr-5 mt-5">
-            <div className="details-container">
-              <div className="profile-section header-part">
-                <div className="profile-section section-title">
-                  User details
+          <div
+            className={`${
+              nameChangeClicked ? "mt-2 mb-4" : "hidden"
+            } flex items-center SlideDown`}
+          >
+            <div class="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-3">
+              <label for="First name">
+                <span class="text-sm text-gray-500">First name</span>
+                <div class="relative flex overflow-hidden rounded-md border-2 transition focus-within:border-blue-600">
+                  <input
+                    type="text"
+                    id="First-name"
+                    class="w-full flex-shrink appearance-none border-gray-300 bg-white py-2 px-4 text-base text-gray-700 placeholder-gray-400 focus:outline-none"
+                    value={updateData.first_name}
+                    onChange={(e) =>
+                      setUpdateData({
+                        ...updateData,
+                        first_name: e.target.value,
+                      })
+                    }
+                  />
                 </div>
-                <div>
-                  <span>
-                    {" "}
-                    <button
-                      class="btn btn-edit"
-                      ng-click="launch('confirm')"
-                      onClick={viewModal}
-                    >
-                      Edit
-                    </button>
-                  </span>
-                  <span>
-                    {" "}
-                    <button
-                      class="btn btn-resetpwd"
-                      ng-click="launch('confirm')"
-                    >
-                      Reset password
-                    </button>
-                  </span>
+              </label>
+              <label for="Surname">
+                <span class="text-sm text-gray-500">Surname</span>
+                <div class="relative flex overflow-hidden rounded-md border-2 transition focus-within:border-blue-600">
+                  <input
+                    type="text"
+                    id="Surname"
+                    class="w-full flex-shrink appearance-none border-gray-300 bg-white py-2 px-4 text-base text-gray-700 placeholder-gray-400 focus:outline-none"
+                    value={
+                      updateData.last_name !== null ? updateData.last_name : ""
+                    }
+                    onChange={(e) =>
+                      setUpdateData({
+                        ...updateData,
+                        last_name: e.target.value,
+                      })
+                    }
+                  />
                 </div>
+              </label>
+            </div>
+
+            <button
+              className="mt-4 ml-4 rounded-lg bg-blue-600 px-4 py-2 text-white"
+              onClick={updateName}
+            >
+              Update
+            </button>
+          </div>
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+            <p class="text-gray-600">
+              Email : <strong>{userData.email}</strong>
+            </p>
+          </div>
+
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+            <p class="text-gray-600">
+              Mobile numuber : <strong>{userData.mobile_no}</strong>
+            </p>
+          </div>
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+            <p class="text-gray-600">Address :</p>
+            <button
+              class="inline-flex text-sm font-semibold text-blue-600 underline decoration-2"
+              onClick={() => {
+                setAddressChangeClicked(!addressChangeClicked);
+                setNameChangeClicked(false);
+                setViewResetPwd(false);
+                setViewAvatarChange(false);
+              }}
+            >
+              Change
+            </button>
+          </div>
+          <div>
+            <span className="text-sm text-gray-600">
+              Address 1 : {address1}
+            </span>
+          </div>
+          <div>
+            <span className="text-sm text-gray-600">
+              Address 2 : {address2}
+            </span>
+          </div>
+          <div>
+            <span className="text-sm text-gray-600">
+              Address 3 : {address3}
+            </span>
+          </div>
+          <div
+            className={`${
+              addressChangeClicked ? "mt-2 mb-4" : "hidden"
+            } flex items-center SlideDown`}
+          >
+            <div class="space-y-2 w-1/2 sm:flex-row sm:space-y-0 sm:space-x-4">
+              <div className="ml-3">
+                <label for="address1">
+                  <span class="text-sm text-gray-500">Address 1</span>
+                  <div class="relative flex overflow-hidden rounded-md border-2 transition focus-within:border-blue-600">
+                    <input
+                      type="text"
+                      id="address1"
+                      className="w-full flex-shrink appearance-none border-gray-300 bg-white py-2 px-4 text-base text-gray-700 placeholder-gray-400 focus:outline-none"
+                      value={address1}
+                      onChange={(e) => setAddress1(e.target.value)}
+                    />
+                  </div>
+                </label>
               </div>
-
-              <div className="details-col-container">
-                <div className="details-col user-name">
-                  <div className="details-col-header">Full name</div>
-                  <div className="details-col-footer">{formData.name}</div>
-                </div>
-                <div className="details-col user-email">
-                  <div className="details-col-header">Email</div>
-                  <div className="details-col-footer">{formData.email}</div>
-                </div>
-                <div className="details-col user-phone-no">
-                  <div className="details-col-header">Phone number</div>
-                  <div className="details-col-footer">
-                    <span className="contry-code">{formData.mobile_no}</span>
+              <div>
+                <label for="address2">
+                  <span class="text-sm text-gray-500">Address 2</span>
+                  <div class="relative flex overflow-hidden rounded-md border-2 transition focus-within:border-blue-600">
+                    <input
+                      type="text"
+                      id="address2"
+                      className="w-full flex-shrink appearance-none border-gray-300 bg-white py-2 px-4 text-base text-gray-700 placeholder-gray-400 focus:outline-none"
+                      value={address2}
+                      onChange={(e) => setAddress2(e.target.value)}
+                    />
                   </div>
-                </div>
-
-                <div className="details-col user-home-address">
-                  <div className="details-col-header">Home address</div>
-                  <div className="details-col-footer">
-                    1st cross street, Hospital lane, Kalmunai
+                </label>
+              </div>
+              <div>
+                <label for="address3">
+                  <span class="text-sm text-gray-500">Address 3</span>
+                  <div class="relative flex overflow-hidden rounded-md border-2 transition focus-within:border-blue-600">
+                    <input
+                      type="text"
+                      id="address3"
+                      class="w-full flex-shrink appearance-none border-gray-300 bg-white py-2 px-4 text-base text-gray-700 placeholder-gray-400 focus:outline-none"
+                      value={address3}
+                      onChange={(e) => setAddress3(e.target.value)}
+                    />
                   </div>
-                </div>
+                </label>
               </div>
             </div>
-            <div className="student details-container">
-              <div className="profile-section section-title">
-                Student details
-              </div>
-              <div className="student details-col-container">
-                <div className="student details-col user-name">
-                  <div className="student details-col-header">Full name</div>
-                  <div className="student details-col-footer">Sam Anderson</div>
-                </div>
-                <div className="student details-col user-email">
-                  <div className="student details-col-header">Email</div>
-                  <div className="student details-col-footer">
-                    sam@gmail.com
-                  </div>
-                </div>
-                <div className="student details-col user-phone-no">
-                  <div className="student details-col-header">Phone number</div>
-                  <div className="student details-col-footer">
-                    <span className="contry-code">+94</span> 777046363
-                  </div>
-                </div>
 
-                <div className="student details-col user-home-address">
-                  <div className="student details-col-header">Home address</div>
-                  <div className="student details-col-footer"></div>
-                </div>
+            <button
+              className="mt-4 ml-4 rounded-lg bg-blue-600 px-4 py-2 text-white"
+              onClick={updateAddress}
+            >
+              Update
+            </button>
+          </div>
+          <hr class="mt-4 mb-8" />
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+            <p class="py-2 text-xl font-semibold">Profile picture</p>
+            <button
+              class="inline-flex text-sm font-semibold text-blue-600 underline decoration-2"
+              onClick={() => {
+                setViewAvatarChange(!viewAvatarChange);
+                setViewResetPwd(false);
+                setAddressChangeClicked(false);
+                setNameChangeClicked(false);
+              }}
+            >
+              Change
+            </button>
+          </div>
+
+          <div
+            className={`${
+              viewAvatarChange ? "" : "hidden"
+            } flex items-center SlideDown`}
+          >
+            <div class="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-3">
+              <div class="flex h-56 w-full flex-col items-center justify-center gap-4 rounded-xl border border-dashed border-gray-300 p-5 text-center">
+                <img src={defaultpic} class="h-16 w-16 rounded-full" />
+                <p class="text-sm text-gray-600">
+                  Drop your desired image file here to start the upload
+                </p>
+                <input
+                  type="file"
+                  class="max-w-full rounded-lg px-2 font-medium text-blue-600 outline-none ring-blue-600 focus:ring-1"
+                />
               </div>
             </div>
+
+            <button class="mt-4 ml-4 rounded-lg bg-blue-600 px-4 py-2 text-white">
+              Update
+            </button>
+          </div>
+
+          <hr class="mt-4 mb-8" />
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+            <p class="py-2 text-xl font-semibold">Password</p>
+            <button
+              class="inline-flex text-sm font-semibold text-blue-600 underline decoration-2"
+              onClick={() => {
+                setViewResetPwd(!viewResetPwd);
+                setAddressChangeClicked(false);
+                setNameChangeClicked(false);
+                setViewAvatarChange(false);
+              }}
+            >
+              Change
+            </button>
+          </div>
+
+          <div
+            className={`${
+              viewResetPwd ? "" : "hidden"
+            } flex items-center SlideDown`}
+          >
+            <div class="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-3">
+              <label for="login-password">
+                <span class="text-sm text-gray-500">Current Password</span>
+                <div class="relative flex overflow-hidden rounded-md border-2 transition focus-within:border-blue-600">
+                  <input
+                    type="password"
+                    id="login-password"
+                    class="w-full flex-shrink appearance-none border-gray-300 bg-white py-2 px-4 text-base text-gray-700 placeholder-gray-400 focus:outline-none"
+                    placeholder="***********"
+                    onChange={(e) => setCurrentPwd(e.target.value)}
+                  />
+                </div>
+              </label>
+              <label for="login-password">
+                <span class="text-sm text-gray-500">New Password</span>
+                <div class="relative flex overflow-hidden rounded-md border-2 transition focus-within:border-blue-600">
+                  <input
+                    type="password"
+                    id="login-password"
+                    class="w-full flex-shrink appearance-none border-gray-300 bg-white py-2 px-4 text-base text-gray-700 placeholder-gray-400 focus:outline-none"
+                    placeholder="***********"
+                    onChange={(e) => setNewPwd(e.target.value)}
+                  />
+                </div>
+              </label>
+            </div>
+
+            <button
+              class="mt-4 ml-4 rounded-lg bg-blue-600 px-4 py-2 text-white"
+              onClick={updatePwd}
+            >
+              Update password
+            </button>
+          </div>
+
+          <hr class="mt-4 mb-8" />
+
+          <div class="mb-10">
+            <p class="py-2 text-xl font-semibold">Delete Account</p>
+            <p class="inline-flex items-center rounded-full bg-rose-100 px-4 py-1 text-rose-600">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="mr-2 h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              Proceed with caution
+            </p>
+            <p class="mt-2">
+              Your data will be completely wiped out. Are you sure, you want to
+              still continue?
+            </p>
+            <button class="ml-auto text-sm font-semibold text-rose-600 underline decoration-2">
+              Continue with deletion
+            </button>
           </div>
         </div>
-      </div>
+      )}
     </React.Fragment>
   );
 };
