@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setClicked } from "../../redux/action";
 import { PiSortAscendingBold } from "react-icons/pi";
 import Loading from "../Loading/Loading";
+import Navbar2 from "../Navbar/Navbar2";
 const Products = () => {
   const [showSortDropdown, setShowSortDropdown] = useState(false);
   const [fetchedProducts, setFetchedProducts] = useState(null);
@@ -152,7 +153,7 @@ const Products = () => {
     <React.Fragment>
       <div className="main-screen-container">
         <div className="navbar-header-container">
-          <Navbar />
+          <Navbar2 />
         </div>
         <div className="skooler-main-container">
           <div class="flex mt-20 pt-3 p-24">

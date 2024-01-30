@@ -7,6 +7,7 @@ import Navbar from "../Navbar/Navbar";
 import { useNavigate } from "react-router-dom";
 import { setClicked } from "../../redux/action";
 import { useDispatch, useSelector } from "react-redux";
+import Navbar2 from "../Navbar/Navbar2";
 const Login = () => {
   const dispatch = useDispatch();
   const navBarstate = useSelector((state) => state.navbar);
@@ -187,7 +188,7 @@ const Login = () => {
   return (
     <React.Fragment>
       <div className="navbar-header-container">
-        <Navbar />
+        <Navbar2 />
       </div>
       <div className="Login-parent-container">
         <div className="container">

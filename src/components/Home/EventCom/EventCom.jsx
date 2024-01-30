@@ -1,7 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./EventCom.css";
 import "../EventSingle/EventSingle.css";
+import { useNavigate } from "react-router-dom";
+import { setClicked } from "../../../redux/action";
+import { useDispatch, useSelector } from "react-redux";
 const EventCom = ({ events }) => {
+  const dispatch = useDispatch();
+  const navBarstate = useSelector((state) => state.navbar);
+  const navigate = useNavigate();
   const containerRef = useRef(null);
   const [scroll, setScroll] = useState(false);
 
@@ -28,6 +34,20 @@ const EventCom = ({ events }) => {
     }
   }, [events]);
 
+  const handleEventClick = (item, id) => {
+    if (!navBarstate[item]) {
+      //navBarstate.eventsClicked(true);
+      dispatch(setClicked(item, true));
+      navigate(`/event/${id}`);
+    } else {
+      dispatch(setClicked(item, false));
+      //navBarstate.eventsClicked(false);
+      //navBarstate.eventsClicked(true);
+      dispatch(setClicked(item, true));
+      navigate(`/event/${id}`);
+    }
+  };
+
   return (
     <React.Fragment>
       <div
@@ -51,6 +71,10 @@ const EventCom = ({ events }) => {
               <a
                 href="#"
                 class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:outline-none focus:ring-gray-200 focus:text-blue-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-gray-700"
+                key={event.id}
+                onClick={() => {
+                  handleEventClick("eventViewClicked", event.id);
+                }}
               >
                 View
                 <svg

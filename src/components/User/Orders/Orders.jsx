@@ -10,7 +10,7 @@ import BookingRow from "./BookingRow";
 import ReceiptView from "./ReceiptView";
 import ReportView from "./ReportView";
 
-const Orders = ({ userData }) => {
+const Orders = ({ userData, overlay }) => {
   const [showSortDropdown, setShowSortDropdown] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isInvoiceOpen, setIsInvoiceOpen] = useState(false);
@@ -81,6 +81,7 @@ const Orders = ({ userData }) => {
             closeModal={() => {
               setIsModalOpen(!isModalOpen);
               setIsInvoiceOpen(!isInvoiceOpen);
+              overlay();
             }}
           />
         )}
@@ -91,6 +92,7 @@ const Orders = ({ userData }) => {
             closeModal={() => {
               setIsModalOpen(!isModalOpen);
               setIsReceiptOpen(!isReceiptOpen);
+              overlay();
             }}
           />
         )}
@@ -101,6 +103,7 @@ const Orders = ({ userData }) => {
             closeModal={() => {
               setIsModalOpen(!isModalOpen);
               setIsReportOpen(!isReportOpen);
+              overlay();
             }}
           />
         )}
@@ -213,11 +216,13 @@ const Orders = ({ userData }) => {
                             setCurrentOrder(order);
                             setIsModalOpen(!isModalOpen);
                             setIsReportOpen(!isReportOpen);
+                            overlay();
                           }}
                           invoiceClicked={() => {
                             setCurrentOrder(order);
                             setIsInvoiceOpen(!isInvoiceOpen);
                             setIsModalOpen(!isModalOpen);
+                            overlay();
                           }}
                         />
                       ))
@@ -261,6 +266,7 @@ const Orders = ({ userData }) => {
                             setCurrentBooking(booking);
                             setIsReceiptOpen(!isReceiptOpen);
                             setIsModalOpen(!isModalOpen);
+                            overlay();
                           }}
                         />
                       ))

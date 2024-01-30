@@ -106,7 +106,7 @@ $sh: 100px;
 
 // Search Bar
 .form-container {
-    z-index: 999;
+    z-index: 9999;
   @extend %center;
   width: var(--sw);
   height: var(--sh);
@@ -231,6 +231,7 @@ $sh: 100px;
 }
 
 .ul {
+  z-index: 999;
   width: 100%;
   height: auto;
   background: transparent;

@@ -39,7 +39,7 @@ const InvoiceView = ({ user, order, closeModal }) => {
   };
   return (
     <React.Fragment>
-      <div className="modal ViewContent">
+      <div className="modal ViewContent z-50">
         <div className="h-100 mt-8 overflow-auto">
           <div class="bg-white rounded-lg shadow-lg px-8 py-10 max-w-xl mx-auto">
             <div class="flex items-center justify-between mb-8">
@@ -75,7 +75,7 @@ const InvoiceView = ({ user, order, closeModal }) => {
                       ? getFormattedDate(order.created_at)
                       : null}
                   </div>
-                  <div class="text-sm">Invoice #: {order.reference_id}</div>
+                  <div class="text-sm">Invoice #: {order.id}</div>
                 </div>
               </div>
               <div class="border-b-2 border-gray-300 pb-8 mb-8">

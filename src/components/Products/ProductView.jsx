@@ -7,6 +7,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Toaster, toast } from "react-hot-toast";
+import Navbar2 from "../Navbar/Navbar2";
 
 const ProductView = () => {
   const navigate = useNavigate();
@@ -195,7 +196,7 @@ const ProductView = () => {
     <React.Fragment>
       <div className="main-screen-container">
         <div className="navbar-header-container">
-          <Navbar />
+          <Navbar2 />
         </div>
 
         <div className="skooler-main-container">

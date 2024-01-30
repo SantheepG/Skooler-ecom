@@ -56,6 +56,12 @@ const CalendarCom = ({ events }) => {
     "December",
   ];
 
+  //const formattedDate = `${daysOfWeek[date.getDay()]}, ${
+  //  months[date.getMonth()]
+  //} ${date.getDate()}${getOrdinalSuffix(
+  //  date.getDate()
+  //)}, ${date.getFullYear()}`;
+
   function formatDate(date) {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0"); // Adding 1 because months are zero-indexed
@@ -102,27 +108,33 @@ const CalendarCom = ({ events }) => {
     return null;
   };
 
-  const [hoveredDate, setHoveredDate] = useState(null);
-
-  const handleMouseOver = (date) => {
-    setHoveredDate(date);
+  const handleItemClick = (item) => {
+    if (!navBarstate[item]) {
+      dispatch(setClicked(item, true));
+    }
   };
 
-  const handleMouseLeave = () => {
-    setHoveredDate(null);
-  };
+  //useEffect(() => {
+  //  const sliderTimeout = setTimeout(() => {
+  //    setSliderIsHidden(false);
+  //  }, 2000); // 10 seconds in milliseconds
 
-  const viewTileContent = ({ date, view }) => (
-    <div
-      onMouseOver={() => handleMouseOver(date)}
-      onMouseLeave={handleMouseLeave}
-    >
-      {date.getDate()}
-      {hoveredDate === date && (
-        <div className="notifier">Your Notifier Content</div>
-      )}
-    </div>
-  );
+  //  return () => clearTimeout(sliderTimeout);
+  //}, [sliderIsHidden]);
+
+  //const customTileContent = ({ date }) => {
+  //  const isCurrent = isCurrentDate(date);
+
+  // if (isCurrent) {
+  //    return (
+  //      <div className="custom-tile-content">
+  //        <div className="red-bar"></div>
+  //      </div>
+  //    );
+  //  } else {
+  //   return null;
+  //  }
+  //};
 
   const handleEventClick = (item, id) => {
     console.log(id);
@@ -140,8 +152,36 @@ const CalendarCom = ({ events }) => {
   };
 
   return (
-    <div className="">
-      <div className="slider-container"></div>
+    <div className="mt-16">
+      <div className="slider-container">
+        <div className={`slider ${sliderIsHidden ? "active" : ""}`}>
+          <div className="slider-current-datetime">
+            <div className="text-xs font-medium text-primary-900 dark:text-primary-400">
+              <span>
+                {date.getDate()}
+                {getOrdinalSuffix(date.getDate())} {months[date.getMonth()]},
+              </span>
+              <span> {date.getFullYear()}</span>
+            </div>
+            <div className="text-gray-600">{daysOfWeek[date.getDay()]}</div>
+          </div>
+          <div className="event-com-scrollable">
+            {sliderEvents.length === 0 ? (
+              <div class="event-com-single dark:text-white">
+                <p className="text-gray-600 ">No events today</p>
+              </div>
+            ) : (
+              sliderEvents.map((event) => (
+                <div class="event-com-single mt-2" key={event.id}>
+                  <div class="event-single-card">
+                    <h3 class="card__content">{event}</h3>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
       <div className="calendar-container">
         <Calendar
           onChange={toggleSlider}

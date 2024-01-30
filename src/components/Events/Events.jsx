@@ -6,6 +6,7 @@ import { PiSortAscendingBold } from "react-icons/pi";
 import axios from "axios";
 import EventRow from "./EventRow";
 import EventPreview from "./EventPreview";
+import Navbar2 from "../Navbar/Navbar2";
 const Events = () => {
   const [showSortDropdown, setShowSortDropdown] = useState(false);
   const [events, setEvents] = useState([]);
@@ -52,7 +53,7 @@ const Events = () => {
       {" "}
       <div className="main-screen-container">
         <div className="navbar-header-container">
-          <Navbar />
+          <Navbar2 />
         </div>
         <div
           className={`${

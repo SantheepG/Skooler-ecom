@@ -6,9 +6,7 @@ const Extra = () => {
       <section class="bg-white py-12 text-gray-700 sm:py-16 lg:py-20">
         <div class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
           <div class="mx-auto max-w-md text-center">
-            <h2 class="text-xl font-semibold sm:text-2xl">
-              Our featured products
-            </h2>
+            <h2 class="text-xl font-semibold sm:text-2xl">Featured products</h2>
             <p class="mt-4 text-base text-gray-700"></p>
           </div>
 

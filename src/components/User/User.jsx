@@ -17,12 +17,14 @@ import Vouchers from "./Vouchers/Vouchers";
 import { Toaster, toast } from "react-hot-toast";
 import Navbar from "../Navbar/Navbar";
 import Footer from "../Footer";
+import Navbar2 from "../Navbar/Navbar2";
 const User = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [reloadCom, setReloadComp] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [userData, setUserData] = useState(null);
+  const [overlayClicked, setOverlayClicked] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -55,7 +57,12 @@ const User = () => {
       <Profile userData={userData} reload={() => setReloadComp(true)} />
     );
   } else if (sideBarstate.ordersClicked) {
-    componentToView = <Orders userData={userData} />;
+    componentToView = (
+      <Orders
+        userData={userData}
+        overlay={() => setOverlayClicked(!overlayClicked)}
+      />
+    );
   } else if (sideBarstate.paymentsClicked) {
     componentToView = <PaymentSettings />;
   } else if (sideBarstate.complaintsClicked) {
@@ -71,7 +78,7 @@ const User = () => {
     <React.Fragment>
       <div className="main-screen-container">
         <div className="navbar-header-container">
-          <Navbar />
+          <Navbar2 overlay={overlayClicked} />
         </div>
         <div className="skooler-main-container mt-16">
           <div class="mx-4  max-w-screen-xl sm:mx-8 xl:mx-auto">

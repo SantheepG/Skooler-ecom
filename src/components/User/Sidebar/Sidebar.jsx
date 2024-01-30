@@ -95,14 +95,6 @@ const Sidebar = () => {
           >
             Reviews
           </li>
-          <li
-            className={`${
-              sideBarstate.vouchersClicked ? "border-l-blue-700" : ""
-            } mt-5 cursor-pointer border-l-2 border-transparent px-2 py-2 font-semibold transition hover:border-l-blue-700 hover:text-blue-700`}
-            onClick={() => handleItemClick("vouchersClicked")}
-          >
-            Voucher
-          </li>
         </ul>
       </div>
     </React.Fragment>

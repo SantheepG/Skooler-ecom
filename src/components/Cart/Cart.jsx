@@ -6,6 +6,7 @@ import { BsDashSquare, BsTrash3, BsPlusSquare } from "react-icons/bs";
 import CartRow from "./CartRow";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Navbar2 from "../Navbar/Navbar2";
 const Cart = () => {
   const navigate = useNavigate();
   const [cartItems, setCartItems] = useState([]);
@@ -105,7 +106,7 @@ const Cart = () => {
       {" "}
       <div className="main-screen-container">
         <div className="navbar-header-container">
-          <Navbar />
+          <Navbar2 />
         </div>
         <div className="skooler-main-container">
           <div className="content">

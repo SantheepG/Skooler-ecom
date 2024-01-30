@@ -40,9 +40,6 @@ const Slideshow = () => {
                 Lorem ipsum dolor sit amet consectetur, adipisicing elit.
                 Recusandae voluptate repellendus magni illo ea animi?{" "}
               </div>
-              <a href="#" class="blog-slider__button">
-                READ MORE
-              </a>
             </div>
           </div>
           <div className="blog-slider__item swiper-slide">
@@ -53,9 +50,6 @@ const Slideshow = () => {
                 Lorem ipsum dolor sit amet consectetur, adipisicing elit.
                 Recusandae voluptate repellendus magni illo ea animi?
               </div>
-              <a href="#" className="blog-slider__button">
-                READ MORE
-              </a>
             </div>
           </div>
 
@@ -73,9 +67,6 @@ const Slideshow = () => {
                 Lorem ipsum dolor sit amet consectetur, adipisicing elit.
                 Recusandae voluptate repellendus magni illo ea animi?
               </div>
-              <a href="#" className="blog-slider__button">
-                READ MORE
-              </a>
             </div>
           </div>
         </div>

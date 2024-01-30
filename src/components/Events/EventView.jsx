@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../Navbar/Navbar";
 import { Toaster, toast } from "react-hot-toast";
 import Footer from "../Footer";
+import Navbar2 from "../Navbar/Navbar2";
 const EventView = () => {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -47,11 +48,24 @@ const EventView = () => {
 
     fetchEventData();
   }, [id]);
+
+  const formatDate = (dateString) => {
+    const options = {
+      hour: "2-digit",
+      minute: "2-digit",
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    };
+
+    const formattedDate = new Date(dateString).toLocaleString("en-US", options);
+    return formattedDate;
+  };
   return (
     <React.Fragment>
       <div className="main-screen-container">
         <div className="navbar-header-container">
-          <Navbar />
+          <Navbar2 />
         </div>
 
         <div className="skooler-main-container mx-96 my-24">
@@ -62,7 +76,9 @@ const EventView = () => {
                 <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
                   {event.event_name}
                   <div className="text-xs text-gray-400 mt-2">
-                    to be held on : {event.event_datetime}
+                    to be held on{" "}
+                    {event.event_datetime !== null &&
+                      formatDate(event.event_datetime)}{" "}
                   </div>
                 </h3>
               </div>
@@ -78,8 +94,14 @@ const EventView = () => {
                     <div class="p-8 w-auto bg-gray-100 rounded-lg dark:bg-gray-700">
                       <div>
                         <span className="mt-4 text-xl font-semibold">
-                          <span>$</span>
-                          {event.payment}
+                          {parseInt(event.payment) === 0 ? (
+                            "Free"
+                          ) : (
+                            <>
+                              <span>$</span>
+                              <span>{event.payment}</span>
+                            </>
+                          )}
                         </span>
 
                         {event.capacity !== null ? (
@@ -102,7 +124,9 @@ const EventView = () => {
                         )}
                       </div>
                       <div className="text-xs text-gray-400 mt-2">
-                        <span>Closing date : </span>
+                        {event.payment_deadline !== null ? (
+                          <span>Closing date : {event.payment_deadline}</span>
+                        ) : null}
                         <span>
                           {event.payment_deadline !== null
                             ? event.payment_deadline
@@ -113,7 +137,13 @@ const EventView = () => {
                         <input
                           type="number"
                           id="visitors"
-                          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          className={`${
+                            parseInt(event.payment) === 0 ||
+                            (event.capacity !== null &&
+                              event.capacity === event.reserved_slots)
+                              ? "hidden"
+                              : ""
+                          } bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
                           placeholder=""
                           min={1}
                           defaultValue={1}
@@ -121,58 +151,18 @@ const EventView = () => {
                         />
                       </div>
                       <div className="mt-6">
-                        {event.capacity !== null ? (
-                          event.capacity === event.reserved_slots ? (
-                            <button
-                              disabled
-                              type="button"
-                              class="text-white disabled:bg-gray-300 bg-blue-500 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                            >
-                              <svg
-                                class="w-3.5 h-3.5 me-2"
-                                aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="currentColor"
-                                viewBox="0 0 18 21"
-                              >
-                                <path d="M15 12a1 1 0 0 0 .962-.726l2-7A1 1 0 0 0 17 3H3.77L3.175.745A1 1 0 0 0 2.208 0H1a1 1 0 0 0 0 2h.438l.6 2.255v.019l2 7 .746 2.986A3 3 0 1 0 9 17a2.966 2.966 0 0 0-.184-1h2.368c-.118.32-.18.659-.184 1a3 3 0 1 0 3-3H6.78l-.5-2H15Z" />
-                              </svg>
-                              Buy now
-                            </button>
-                          ) : (
-                            <button
-                              type="button"
-                              class="text-white disabled:bg-gray-300 bg-blue-500 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                            >
-                              <svg
-                                class="w-3.5 h-3.5 me-2"
-                                aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="currentColor"
-                                viewBox="0 0 18 21"
-                              >
-                                <path d="M15 12a1 1 0 0 0 .962-.726l2-7A1 1 0 0 0 17 3H3.77L3.175.745A1 1 0 0 0 2.208 0H1a1 1 0 0 0 0 2h.438l.6 2.255v.019l2 7 .746 2.986A3 3 0 1 0 9 17a2.966 2.966 0 0 0-.184-1h2.368c-.118.32-.18.659-.184 1a3 3 0 1 0 3-3H6.78l-.5-2H15Z" />
-                              </svg>
-                              Buy now
-                            </button>
-                          )
-                        ) : (
-                          <button
-                            type="button"
-                            class="text-white disabled:bg-gray-300 bg-blue-500 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                          >
-                            <svg
-                              class="w-3.5 h-3.5 me-2"
-                              aria-hidden="true"
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="currentColor"
-                              viewBox="0 0 18 21"
-                            >
-                              <path d="M15 12a1 1 0 0 0 .962-.726l2-7A1 1 0 0 0 17 3H3.77L3.175.745A1 1 0 0 0 2.208 0H1a1 1 0 0 0 0 2h.438l.6 2.255v.019l2 7 .746 2.986A3 3 0 1 0 9 17a2.966 2.966 0 0 0-.184-1h2.368c-.118.32-.18.659-.184 1a3 3 0 1 0 3-3H6.78l-.5-2H15Z" />
-                            </svg>
-                            Buy now
-                          </button>
-                        )}
+                        <button
+                          type="button"
+                          className={`${
+                            parseInt(event.payment) === 0 ||
+                            (event.capacity !== null &&
+                              event.capacity === event.reserved_slots)
+                              ? "hidden"
+                              : ""
+                          } bg-gray-50 border border-orange-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-orange-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
+                        >
+                          Buy now
+                        </button>
                       </div>
                     </div>
                   </div>
