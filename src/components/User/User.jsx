@@ -18,7 +18,7 @@ import { Toaster, toast } from "react-hot-toast";
 import Navbar from "../Navbar/Navbar";
 import Footer from "../Footer";
 import Navbar2 from "../Navbar/Navbar2";
-const User = () => {
+const User = ({ ui, school }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [reloadCom, setReloadComp] = useState(false);
@@ -64,7 +64,7 @@ const User = () => {
       />
     );
   } else if (sideBarstate.paymentsClicked) {
-    componentToView = <PaymentSettings />;
+    componentToView = <PaymentSettings user={userData} />;
   } else if (sideBarstate.complaintsClicked) {
     componentToView = <Complaints user={userData} />;
   } else if (sideBarstate.reviewsClicked) {
@@ -76,11 +76,10 @@ const User = () => {
   }
   return (
     <React.Fragment>
-      <div className="main-screen-container">
-        <div className="navbar-header-container">
-          <Navbar2 overlay={overlayClicked} />
-        </div>
-        <div className="skooler-main-container mt-16">
+      <div className="m-0 p-0">
+        <Navbar2 overlay={overlayClicked} ui={ui} school={school} />
+
+        <div className=" mt-16">
           <div class="mx-4  max-w-screen-xl sm:mx-8 xl:mx-auto">
             <h1 class="border-b py-6 text-2xl font-semibold">My Account</h1>
             <div class="grid grid-cols-8 pt-3 pb-10 sm:grid-cols-10">

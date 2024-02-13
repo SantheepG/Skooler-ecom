@@ -129,7 +129,7 @@ const EventPreview = ({ closeModal, event }) => {
                           event.capacity === event.reserved_slots)
                           ? "hidden"
                           : ""
-                      } bg-gray-50 border border-orange-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-orange-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
+                      } bg-gray-50 border border-orange-300 text-gray-900 text-sm rounded-3xl focus:ring-blue-500 focus:border-orange-500 block px-4 border-2 py-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
                     >
                       Buy now
                     </button>

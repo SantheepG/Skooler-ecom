@@ -2,7 +2,7 @@
 .calendar-container {
     position: relative; 
     z-index: 2;
-    width: 350px;
+    width: 340px;
     max-width: 100%;
     background-color: #fff;
     color: #222;
@@ -11,7 +11,6 @@
     font-family: Arial, Helvetica, sans-serif;
     line-height: 1.125em;
     padding: 0;
-    margin: -280px 0 2px 0;
     
       /* Center content */
   display: flex;
@@ -110,57 +109,10 @@
     color: white;
    }
 
-   .slider-container {
-    position: relative;
-    background: #ffffff ;
-    height: 280px;
-    z-index: 1; 
-    margin-top: 20px;
-    visibility: none;
-    border-radius: 20px;
-  }
+
 
   
-  .slider {
-    position: absolute;
-    top: 0;
-    left: -300px; 
-    width: 300px;
-    height: 100%;
-    border-radius: 20px;
-    border: solid 1px #e0d3bf;
-    box-shadow: 0 1px 3px 0 rgba(127, 124, 124, 0.2);
-    backdrop-filter: blur(25px);
-    -webkit-backdrop-filter: blur(10px);
-    transition: left 0.3s ease-in-out; 
-    padding: 15px 0 0 15px;
-  }
   
-  .slider-current-datetime{
-    color: rgb(94, 92, 92);
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.934); 
-    
-  }
-  .slider.active {
-    left: 0; 
-  }
-  
-
-  .slider p {
-    padding: 15px;
-    
-  }
-
- .calendar .event-com-scrollable{
-    height: 200px;
-    margin: 10px 0 0 0;
-    padding: 0 20px 0 0;
- }
-
- .event-com-scrollable .event-com-single{
-    border-radius: 10px;
- }
-
  .red-bar {
   width: 5px;
   height: 5px;

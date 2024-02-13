@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "./Orders.css";
-import { BsDashSquare, BsTrash3, BsPlusSquare } from "react-icons/bs";
+
 import { PiSortAscendingBold } from "react-icons/pi";
 import { Toaster, toast } from "react-hot-toast";
 import { fetchOrders } from "../../../api/UserAPI";
@@ -107,7 +106,7 @@ const Orders = ({ userData, overlay }) => {
             }}
           />
         )}
-        <div class="col-span-8 ViewContent overflow-hidden rounded-xl sm:bg-gray-50 sm:px-8 ">
+        <div class="col-span-8 ViewContent overflow-hidden pb-8 rounded-xl sm:bg-gray-50 sm:px-8 ">
           <div className="flex mt-4 mb-4 justify-between text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700">
             <ul className="flex flex-wrap -mb-px">
               <li className="me-2">
@@ -183,7 +182,7 @@ const Orders = ({ userData, overlay }) => {
             <table class="min-w-full border-collapse border-spacing-y-2 border-spacing-x-2">
               {ordersClicked ? (
                 <>
-                  <thead class="border-b md:hidden sm:hidden lg:table-header-group">
+                  <thead class="border-b sm:hidden lg:table-header-group">
                     <tr class="">
                       <td class="whitespace-normal py-4 text-sm font-semibold text-gray-800 sm:px-3">
                         Order Date

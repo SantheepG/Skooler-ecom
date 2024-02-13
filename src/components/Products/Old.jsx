@@ -11,7 +11,7 @@ import { setClicked } from "../../redux/action";
 import { PiSortAscendingBold } from "react-icons/pi";
 import Loading from "../Loading/Loading";
 import Navbar2 from "../Navbar/Navbar2";
-const Products = ({ ui, school }) => {
+const Products = () => {
   const [showSortDropdown, setShowSortDropdown] = useState(false);
   const [fetchedProducts, setFetchedProducts] = useState(null);
   const [allProducts, setAllProducts] = useState([]);
@@ -153,20 +153,20 @@ const Products = ({ ui, school }) => {
     <React.Fragment>
       <div className="main-screen-container">
         <div className="navbar-header-container">
-          <Navbar2 ui={ui} school={school} />
+          <Navbar2 />
         </div>
         <div className="skooler-main-container">
-          <div className="flex mt-32 pt-3 p-24">
-            <div className="w-full flex-1">
-              <div className="px-10 ">
-                <div className="flex flex-col md:flex-row justify-between w-full mb-5">
-                  <div className="text-xl font-semibold w-full md:w-32 mb-4 md:mb-0 md:mr-4">
-                    <h2 className={`text-${ui.primary_clr}-600`}>{title}</h2>
+          <div class="flex mt-20 pt-3 p-24">
+            <div class="w-full flex-1">
+              <div class="px-10 ">
+                <div className="flex justify-between w-full mb-5">
+                  <div className=" text-xl font-semibold w-32">
+                    <h2 className="text-gray-600">{title}</h2>
                   </div>
-                  <div className="flex flex-col md:flex-row w-full md:w-1/2">
+                  <div className="flex w-1/2">
                     <select
                       id="categories"
-                      className={`mb-2 md:mb-0 w-full md:w-38 mr-4 border-gray-300 text-gray-500  border text-sm rounded-lg p-2.5 focus:ring-blue-500 focus:border-${ui.secondary_clr}-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-${ui.secondary_clr}-400 dark:text-white dark:focus:ring-${ui.secondary_clr}-500 dark:focus:border-${ui.secondary_clr}-500`}
+                      class="bg-gray-50 mr-4 w-38 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       onChange={(e) => handleCategoryChange(e)}
                     >
                       <option selected disabled>
@@ -184,7 +184,7 @@ const Products = ({ ui, school }) => {
                     </select>
                     <select
                       id="subcategories"
-                      className={`mb-2 md:mb-0 w-full md:w-38 mr-4 border-gray-300 text-gray-500  border text-sm rounded-lg p-2.5 focus:ring-blue-500 focus:border-${ui.secondary_clr}-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-${ui.secondary_clr}-400 dark:text-white dark:focus:ring-${ui.secondary_clr}-500 dark:focus:border-${ui.secondary_clr}-500`}
+                      class="bg-gray-50 border w-38 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       onChange={(e) => handleSubcategoryChange(e)}
                     >
                       <option selected disabled>
@@ -203,7 +203,7 @@ const Products = ({ ui, school }) => {
                     </select>
                     <span>
                       <button
-                        className="text-sm ml-4 bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border rounded-2xl border-gray-300 "
+                        class="text-sm mx-5 bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-red-300 rounded "
                         onClick={handleReset}
                       >
                         Reset

@@ -10,9 +10,10 @@ import { BsSearch } from "react-icons/bs";
 import { PiShoppingCart } from "react-icons/pi";
 import Notifications from "./Notifications";
 import UserDropdown from "./UserDropdown";
+import hologoLogo from "../assets/Hologo_logo.png";
 import "./SearchBar.scss";
 import SideNav from "./SideNav";
-const Navbar2 = ({ overlay }) => {
+const Navbar2 = ({ overlay, ui, school }) => {
   const [colorPalette, setColorPalette] = useState({
     primary: "blue",
     border: "blue",
@@ -160,24 +161,25 @@ const Navbar2 = ({ overlay }) => {
   };
   return (
     <React.Fragment>
-      <nav className="flex justify-between px-24 items-center bg-white p-4 h-12 ">
-        {/* Left logo */}
-        <div>
-          <img src="left-logo.png" alt="School logo" className="max-w-100" />
+      <nav className="flex py-2 justify-between px-32 items-center bg-white ">
+        <div className="w-12 w-12 flex">
+          <img
+            src={`http://127.0.0.1:8080/api/super/getlogo/${school.logo_id}`}
+            alt="School logo"
+            className="max-w-100"
+          />
+          <span className="m-3 text-gray-600">{school.name}</span>
         </div>
 
-        {/* Navigation links can be added here */}
-
-        {/* Right logo */}
-        <div>
-          <img src="right-logo.png" alt="Skooler Logo" className="max-w-100" />
+        <div className="w-12 w-12 flex">
+          <img src={hologoLogo} alt="Skooler Logo" className="max-w-100" />
         </div>
       </nav>
       <header
-        className={`bg-white fixed shadow-md top-0 w-full ${
+        className={`bg-white fixed shadow-md rounded-xl py-2 top-0 w-full ${
           isSticky
-            ? "bg-white border-b-1 border-white SlideDown"
-            : "top-12  text-blue-900 border"
+            ? `bg-white border border-b-1 border-${ui.secondary_clr} SlideDown`
+            : `top-16 text-${ui.secondary_clr} border`
         } ${overlay ? "" : "z-50"}`}
       >
         <div
@@ -483,7 +485,7 @@ const Navbar2 = ({ overlay }) => {
               ) : (
                 <li>
                   <button
-                    class="rounded-full border-2 border-blue-500 px-6 py-1 text-blue-600 transition-colors hover:bg-blue-500 hover:text-white"
+                    className={`rounded-full border-2 border-${ui.secondary_clr} px-6 py-1 text-${ui.secondary_clr} transition-colors hover:bg-${ui.secondary_clr} hover:text-white`}
                     onClick={() => {
                       handleEventClick("loginClicked");
                     }}

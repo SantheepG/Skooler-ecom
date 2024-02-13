@@ -6,7 +6,7 @@ import Navbar from "../Navbar/Navbar";
 import { Toaster, toast } from "react-hot-toast";
 import Footer from "../Footer";
 import Navbar2 from "../Navbar/Navbar2";
-const EventView = () => {
+const EventView = ({ ui, school }) => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [event, setEvent] = useState([]);
@@ -65,7 +65,7 @@ const EventView = () => {
     <React.Fragment>
       <div className="main-screen-container">
         <div className="navbar-header-container">
-          <Navbar2 />
+          <Navbar2 ui={ui} school={school} />
         </div>
 
         <div className="skooler-main-container mx-96 my-24">

@@ -9,34 +9,20 @@ import Extra from "./Extra";
 import axios from "axios";
 import { IoIosArrowDropright } from "react-icons/io";
 import Navbar2 from "../Navbar/Navbar2";
-
+import Carousel from "./Carousel";
 import { useNavigate } from "react-router-dom";
 import { setClicked } from "../../redux/action";
 import { useDispatch, useSelector } from "react-redux";
 
-const Home = () => {
+const Home = ({ school, ui }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const text =
+    "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt laudantium rem molestiae.";
+  const [displayText, setDisplayText] = useState("");
   const navBarstate = useSelector((state) => state.navbar);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [events, setEvents] = useState([]);
-  const [slides, setSlides] = useState([
-    {
-      date: "26 December 2023",
-      name: "Lorem Ipsum Dolor",
-      desc: "fdfdsfdfsdfdfdfsdfds",
-    },
-    {
-      date: "22 December 2024",
-      name: "Lorem Ipsudvdvdvdm Dolor",
-      desc: "fdfdsfdfsdfdfdfdddvdsdfds",
-    },
-    {
-      date: "26 December 2024",
-      name: "Ipsum Dolor",
-      desc: "fdfdsfdfsdfdfdfsdfds",
-    },
-  ]);
 
   useEffect(() => {
     //
@@ -52,18 +38,6 @@ const Home = () => {
     };
     fetchEvents();
   }, []);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSlide((prevSlide) =>
-        prevSlide === slides.length - 1 ? 0 : prevSlide + 1
-      );
-    }, 3000);
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, [slides.length]);
 
   const viewEvent = (item, id) => {
     if (!navBarstate[item]) {
@@ -91,13 +65,14 @@ const Home = () => {
     const formattedDate = new Date(dateString).toLocaleString("en-US", options);
     return formattedDate;
   };
+
   return (
     <React.Fragment>
       <div className="main-screen-container">
         <div className="navbar-header-container border-b">
-          <Navbar2 />
+          <Navbar2 ui={ui} school={school} />
         </div>
-        <div class="relative">
+        <div class="relative mt-8">
           <img
             src="https://cdn.forumcomm.com/dims4/default/9e69d9f/2147483647/strip/false/crop/4755x2675+0+141/resize/1200x675!/quality/90/?url=https%3A%2F%2Fforum-communications-production-web.s3.us-west-2.amazonaws.com%2Fbrightspot%2Fef%2F01%2Fdde07d5540038af08eea80820ea6%2Fannouncement-graphic-2.jpg"
             class="absolute inset-0 h-full w-full object-cover"
@@ -120,13 +95,22 @@ const Home = () => {
                     Announcment
                   </h2>
                   <p class="mb-4 max-w-xl text-base text-gray-200 md:text-lg">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Sunt laudantium rem molestiae.
+                    {displayText}
                   </p>
                 </div>
                 <div class="w-full max-w-xl xl:w-5/12 xl:px-24">
-                  <div class="overflow-hidden rounded-xl border-t-4 border-emerald-600 bg-white p-7 shadow-sm shadow-emerald-300 sm:p-4">
+                  <div class="overflow-hidden  rounded-xl border-t-4 border-emerald-600 bg-white p-7 shadow-lg shadow-gray-300 sm:p-1">
                     <CalendarCom events={events} />
+                    <div className="flex mt-1 px-10">
+                      <span className="text-xs text-gray-500 flex">
+                        <span class="w-2 h-2 me-1 mt-1 bg-red-500 rounded-full"></span>
+                        School events
+                      </span>
+                      <span className="text-xs ml-8 text-gray-500 flex">
+                        <span class="w-2 h-2 me-1 mt-1 bg-yellow-400 rounded-full"></span>
+                        Public holidays
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -135,9 +119,13 @@ const Home = () => {
         </div>
         <section class="bg-white py-12 text-gray-700 sm:py-16 lg:py-20">
           <div class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
-            <div class="mx-auto max-w-md text-center">
-              <h2 class="text-xl sm:text-3xl">Featured products</h2>
-            </div>
+            <h1 class="text-center text-3xl font-semibold text-indigo-700 sm:text-3xl">
+              <p class="mt-3 text-xl sm:mt-8 sm:text-2xl">
+                <div>Featured products</div>
+
+                <span class="mr-3">——</span>
+              </p>
+            </h1>
 
             <div class="mt-10 grid grid-cols-2 gap-6 lg:mt-16 lg:grid-cols-4 lg:gap-4">
               <article class="relative">
@@ -487,11 +475,13 @@ const Home = () => {
         </section>
         <section class="bg-white py-6 sm:py-8 lg:py-12">
           <div class="mx-auto max-w-screen-xl px-4 md:px-8">
-            <div class="mb-10 md:mb-16">
-              <h2 class="mb-4 text-center text-xl  text-gray-800 md:mb-6 lg:text-3xl">
-                Recent events
-              </h2>
-            </div>
+            <h1 class="text-center text-3xl font-semibold text-indigo-700 sm:text-3xl">
+              <p class="mt-3 text-xl sm:mt-8 mb-16 sm:text-2xl">
+                <div>Recent events</div>
+
+                <span class="mr-3">——</span>
+              </p>
+            </h1>
 
             <div class="grid gap-8 sm:grid-cols-2 sm:gap-12 lg:grid-cols-2 xl:grid-cols-2 xl:gap-16">
               {events.length !== 0 &&

@@ -43,6 +43,7 @@ const ProductCard2 = ({ productData }) => {
   const addToCart = async () => {
     if (!loggedIn) {
       navigate("/login");
+      dispatch(setClicked("loginClicked", true));
     } else {
       try {
         const response = axios.post(

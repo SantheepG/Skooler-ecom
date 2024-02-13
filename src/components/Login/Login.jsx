@@ -7,13 +7,15 @@ import Navbar from "../Navbar/Navbar";
 import { useNavigate } from "react-router-dom";
 import { setClicked } from "../../redux/action";
 import { useDispatch, useSelector } from "react-redux";
+import ForgetPwd from "./ForgetPwd";
 import Navbar2 from "../Navbar/Navbar2";
-const Login = () => {
+const Login = ({ ui, school }) => {
   const dispatch = useDispatch();
   const navBarstate = useSelector((state) => state.navbar);
   const navigate = useNavigate();
   const [isSignUpActive, setIsSignUpActive] = useState(false);
   const [nextBtnClicked, setNextBtnClicked] = useState(false);
+  const [forgetPwdClicked, setForgetPwdClicked] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     student_id: "",
@@ -25,6 +27,7 @@ const Login = () => {
 
   const handleSignUpClick = () => {
     setIsSignUpActive(true);
+    setForgetPwdClicked(false);
     setFormData({
       name: "",
       student_id: "",
@@ -188,7 +191,7 @@ const Login = () => {
   return (
     <React.Fragment>
       <div className="navbar-header-container">
-        <Navbar2 />
+        <Navbar2 ui={ui} school={school} />
       </div>
       <div className="Login-parent-container">
         <div className="container">
@@ -339,52 +342,66 @@ const Login = () => {
               </div>
             </div>
             <div class="form-container sign-in-container">
-              <div className="form">
-                <h1>Login</h1>
+              {forgetPwdClicked ? (
+                <ForgetPwd Cancel={() => setForgetPwdClicked(false)} />
+              ) : (
+                <div className="form">
+                  <h1>Login</h1>
 
-                <div class="w-full mb-6 mt-10 px-16" data-te-input-wrapper-init>
-                  <div>
-                    <input
-                      type="text"
-                      name="phone_no"
-                      id="phone_no"
-                      placeholder="Phone number"
-                      class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      required=""
-                      value={formData.mobile_no}
-                      onChange={(e) =>
-                        setFormData({ ...formData, mobile_no: e.target.value })
-                      }
-                    />
+                  <div
+                    class="w-full mb-6 mt-10 px-16"
+                    data-te-input-wrapper-init
+                  >
+                    <div>
+                      <input
+                        type="text"
+                        name="phone_no"
+                        id="phone_no"
+                        placeholder="Phone number"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        required=""
+                        value={formData.mobile_no}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            mobile_no: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+
+                    <div>
+                      <input
+                        type="password"
+                        name="password"
+                        id="password"
+                        placeholder="Password"
+                        class="mt-5 bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        required=""
+                        value={formData.password}
+                        onChange={(e) =>
+                          setFormData({ ...formData, password: e.target.value })
+                        }
+                      />
+                    </div>
                   </div>
 
-                  <div>
-                    <input
-                      type="password"
-                      name="password"
-                      id="password"
-                      placeholder="Password"
-                      class="mt-5 bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      required=""
-                      value={formData.password}
-                      onChange={(e) =>
-                        setFormData({ ...formData, password: e.target.value })
-                      }
-                    />
-                  </div>
+                  <a
+                    className="forget-password"
+                    href="#"
+                    onClick={() => setForgetPwdClicked(true)}
+                  >
+                    Forgot password?
+                  </a>
+                  <button
+                    type="button"
+                    class="hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800 "
+                    onClick={handleLogin}
+                  >
+                    Login
+                  </button>
                 </div>
-
-                <a className="forget-password" href="#">
-                  Forgot your password?
-                </a>
-                <button
-                  type="button"
-                  class="hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800 "
-                  onClick={handleLogin}
-                >
-                  Login
-                </button>
-              </div>
+              )}
             </div>
             <div class="overlay-container">
               <div class="overlay">

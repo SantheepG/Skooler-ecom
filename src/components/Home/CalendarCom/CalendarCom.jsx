@@ -141,7 +141,6 @@ const CalendarCom = ({ events }) => {
 
   return (
     <div className="">
-      <div className="slider-container"></div>
       <div className="calendar-container">
         <Calendar
           onChange={toggleSlider}

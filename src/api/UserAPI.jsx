@@ -157,3 +157,44 @@ export const DeleteReview = async (id) => {
     return error;
   }
 };
+
+export const AddCard = async (data) => {
+  try {
+    const response = await axios.post(
+      `http://127.0.0.1:8000/api/user/card/add`,
+      data,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const FetchCards = async (id) => {
+  try {
+    const response = await axios.get(
+      `http://127.0.0.1:8000/api/user/card/${id}`
+    );
+
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const FetchNotifications = async (id) => {
+  try {
+    const response = await axios.get(
+      `http://127.0.0.1:8000/api/user/notifics/${id}`
+    );
+
+    return response;
+  } catch (error) {
+    return error;
+  }
+};

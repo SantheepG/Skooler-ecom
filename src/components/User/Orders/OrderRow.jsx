@@ -92,7 +92,7 @@ const OrderRow = ({ user, order, invoiceClicked, reportClicked }) => {
           {" " + order.order_type}
         </td>
 
-        <td class="whitespace-no-wrap py-4 text-sm font-normal text-gray-600 sm:px-3 lg:table-cell">
+        <td class="whitespace-no-wrap sm:hidden py-4 text-sm font-normal text-gray-600 sm:px-3 lg:table-cell">
           {products.length !== 0
             ? products.map((product, index) => (
                 <div key={index}>
@@ -102,18 +102,9 @@ const OrderRow = ({ user, order, invoiceClicked, reportClicked }) => {
             : null}
         </td>
 
-        <td class="whitespace-no-wrap py-4 text-right text-sm text-gray-600 sm:px-3 lg:text-left">
+        <td class="whitespace-no-wrap sm:hidden py-4 text-right text-sm text-gray-600 sm:px-3 lg:text-left">
           <span>$</span>
           {order.total_price}
-          {order.order_status === "Delivered" ? (
-            <span class="mt-1 ml-auto block w-fit whitespace-nowrap rounded-full bg-green-100 px-2 py-0.5 text-center text-xs text-green-800 lg:hidden">
-              {order.order_status}
-            </span>
-          ) : (
-            <span class="mt-1 ml-auto block w-fit whitespace-nowrap rounded-full bg-orange-100 px-2 py-0.5 text-center text-xs text-orange-800 lg:hidden">
-              {order.order_status}
-            </span>
-          )}
         </td>
 
         <td class="whitespace-no-wrap py-4 text-sm font-normal text-gray-500 sm:px-3 lg:table-cell">
@@ -126,7 +117,8 @@ const OrderRow = ({ user, order, invoiceClicked, reportClicked }) => {
               {order.order_status}
             </span>
           )}
-
+        </td>
+        <td>
           <button
             class="bg-white hover:bg-gray-100 text-gray-800 text-xs font-semibold py-1 px-4 border border-gray-200 rounded "
             onClick={() => invoiceClicked()}

@@ -1,0 +1,137 @@
+<div className="skooler-main-container">
+    <div className="content">
+      {" "}
+      <div className="cart-content">
+        <div className="left-column">
+          <div className="cart-container">
+            <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+              <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                  <tr>
+                    <th scope="col" class="px-16 py-3">
+                      <span class="sr-only">Image</span>
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                      Product
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                      Price
+                    </th>
+                    <th scope="col" class="px-16 py-3">
+                      Qty
+                    </th>
+
+                    <th scope="col" class="px-6 py-3">
+                      Total
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                      Action
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {cartItems.length !== 0 ? (
+                    cartItems.map((item, index) => (
+                      <CartRow
+                        key={index}
+                        product={item}
+                        subtotal={updateSubtotal}
+                        qtyUpdate={(qty) => changeQty(index, qty)}
+                        deleteItem={() => deleteItem(item.id)}
+                      />
+                    ))
+                  ) : (
+                    <tr className="bg-white w-full items-center justify-center border dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                      <p className="pt-10 pb-10 ml-10">Cart is empty</p>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div className="right-column">
+          <div className="summary-section">
+            <div className="summary-section-heading">Order summary</div>
+            <div className="summary-section-content">
+              <div class="summary">
+                <div class="summary-total-items">
+                  <span class="total-items"></span> Total cost of your
+                  Cart
+                </div>
+                <div class="summary-subtotal">
+                  <div class="subtotal-title">Subtotal</div>
+                  <div
+                    class="subtotal-value final-value"
+                    id="basket-subtotal"
+                  >
+                    <span className="currency-symbol"></span>
+                    {subtotal}
+                  </div>
+                  <div class="summary-promo hide">
+                    <div class="promo-title">Promotion</div>
+                    <div
+                      class="promo-value final-value"
+                      id="basket-promo"
+                    ></div>
+                  </div>
+                </div>
+                <div class="summary-delivery">
+                  <select
+                    name="delivery-collection"
+                    class="summary-delivery-selection"
+                  >
+                    <option value="0" selected="selected">
+                      Select Pickup or Delivery
+                    </option>
+                    <option value="pickup">Pickup</option>
+                    <option value="delivery">Delivery</option>
+                  </select>
+                </div>
+                <div className="cart-voucher-code">
+                  <span className="cart-voucher-code-input">
+                    <input type="text" placeholder="Enter Voucher Code" />
+                  </span>
+                  <span>
+                    <button className="cart-voucher-code-add-btn">
+                      ADD
+                    </button>
+                  </span>
+                </div>
+                <div class="summary-total">
+                  <div class="total-title">Total</div>
+                  <div class="total-value final-value" id="basket-total">
+                    <span className="currency-symbol"></span>
+                    {totalCost}
+                  </div>
+                </div>
+                <div class="summary-checkout">
+                  <button
+                    type="button"
+                    class="group inline-flex w-full items-center justify-center rounded-md bg-orange-500 px-4 py-2 text-md font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-gray-800"
+                  >
+                    Proceed to checkout
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="group-hover:ml-8 ml-4 h-6 w-6 transition-all"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M13 7l5 5m0 0l-5 5m5-5H6"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

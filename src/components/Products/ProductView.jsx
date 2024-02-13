@@ -8,8 +8,10 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Toaster, toast } from "react-hot-toast";
 import Navbar2 from "../Navbar/Navbar2";
-
-const ProductView = () => {
+import { setClicked } from "../../redux/action";
+import { useDispatch, useSelector } from "react-redux";
+const ProductView = ({ ui, school }) => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
   const { avgr } = useParams();
@@ -95,6 +97,7 @@ const ProductView = () => {
 
   const addToCart = async () => {
     if (!loggedIn) {
+      dispatch(setClicked("loginClicked", true));
       navigate("/login");
     } else {
       try {
@@ -196,7 +199,7 @@ const ProductView = () => {
     <React.Fragment>
       <div className="main-screen-container">
         <div className="navbar-header-container">
-          <Navbar2 />
+          <Navbar2 ui={ui} school={school} />
         </div>
 
         <div className="skooler-main-container">
