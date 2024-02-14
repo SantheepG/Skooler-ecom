@@ -11,6 +11,7 @@ import { PiShoppingCart } from "react-icons/pi";
 import Notifications from "./Notifications";
 import UserDropdown from "./UserDropdown";
 import hologoLogo from "../assets/Hologo_logo.png";
+import { base_URL } from "../../api/SchoolAPI";
 import "./SearchBar.scss";
 import SideNav from "./SideNav";
 const Navbar2 = ({ overlay, ui, school }) => {
@@ -162,16 +163,19 @@ const Navbar2 = ({ overlay, ui, school }) => {
   return (
     <React.Fragment>
       <nav className="flex py-2 justify-between px-32 items-center bg-white ">
-        <div className="w-12 w-12 flex">
-          <img
-            src={`http://127.0.0.1:8080/api/super/getlogo/${school.logo_id}`}
-            alt="School logo"
-            className="max-w-100"
-          />
+        <div className="flex">
+          <div className="w-12 h-12">
+            <img
+              src={`${base_URL}/super/getlogo/${school.logo_id}`}
+              alt="School logo"
+              className="max-w-100"
+            />
+          </div>
+
           <span className="m-3 text-gray-600">{school.name}</span>
         </div>
 
-        <div className="w-12 w-12 flex">
+        <div className="w-12 w-12 sm:hidden md:block lg:">
           <img src={hologoLogo} alt="Skooler Logo" className="max-w-100" />
         </div>
       </nav>
@@ -485,7 +489,7 @@ const Navbar2 = ({ overlay, ui, school }) => {
               ) : (
                 <li>
                   <button
-                    className={`rounded-full border-2 border-${ui.secondary_clr} px-6 py-1 text-${ui.secondary_clr} transition-colors hover:bg-${ui.secondary_clr} hover:text-white`}
+                    className={`rounded-full border-2 border-${ui.secondary_clr} px-6 py-1 text-${ui.secondary_clr} transition-colors hover:bg-${ui.primary_clr} hover:text-white`}
                     onClick={() => {
                       handleEventClick("loginClicked");
                     }}

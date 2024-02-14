@@ -116,7 +116,7 @@ const CartRow = ({ product, qtyUpdate, deleteItem, subtotal }) => {
                 -{" "}
               </span>
               <input
-                class="h-8 w-8 bg-white text-center text-xs outline-none"
+                class="h-8 w-16 bg-white text-center text-xs outline-none"
                 type="text"
                 value={qty}
                 min={1}
