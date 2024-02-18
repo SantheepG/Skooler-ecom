@@ -1,20 +1,21 @@
 import React, { useEffect, useState } from "react";
-import Navbar from "../Navbar/Navbar";
 import Footer from "../Footer";
 import ProductCard2 from "./ProductCard2";
 import defaultpic from "../assets/default-avatar.png";
 import { useParams } from "react-router-dom";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Toaster, toast } from "react-hot-toast";
 import Navbar2 from "../Navbar/Navbar2";
 import { setClicked } from "../../redux/action";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { AddToCart, ReviewProduct } from "../../api/UserAPI";
+import { FetchProduct, FetchRelatedProducts } from "../../api/ProductAPI";
+import { formatDate } from "../CommonFuncs";
 const ProductView = ({ ui, school }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
-  const { avgr } = useParams();
+
   const [addText, setAddText] = useState("Add to cart");
   const [productData, setProductData] = useState([]);
   const [productReviews, setProductReviews] = useState([]);
@@ -46,11 +47,9 @@ const ProductView = ({ ui, school }) => {
   useEffect(() => {
     const fetchRelatedProducts = async () => {
       try {
-        const response = await axios.get(
-          `http://127.0.0.1:8000/api/products/related/${id}`
-        );
+        const response = await FetchRelatedProducts(id);
         if (response) {
-          setRelatedProducts(response.data);
+          setRelatedProducts(response.data.products);
           console.log(relatedProducts);
         } else {
           console.log(response);
@@ -75,17 +74,16 @@ const ProductView = ({ ui, school }) => {
   useEffect(() => {
     const fetchProductData = async () => {
       try {
-        const response = await axios.get(
-          `http://127.0.0.1:8000/api/product/${id}`
-        );
-
-        setProductData(response.data.product);
-        setProductReviews(response.data.reviews);
-        setReloadCom(false);
-        if (response.data.product.stock === 0) {
-          setAddText("Out of stock");
-        } else {
-          setAddText("Add to cart");
+        const response = await FetchProduct(id);
+        if (response.status === 200) {
+          setProductData(response.data.product);
+          setProductReviews(response.data.reviews);
+          setReloadCom(false);
+          if (response.data.product.stock === 0) {
+            setAddText("Out of stock");
+          } else {
+            setAddText("Add to cart");
+          }
         }
       } catch (error) {
         console.log("Error:", error);
@@ -101,35 +99,41 @@ const ProductView = ({ ui, school }) => {
       navigate("/login");
     } else {
       try {
-        const response = axios.post(
-          "http://127.0.0.1:8000/api/cart/add",
-          {
-            user_id: userData.id,
-            product_id: productData.id,
-            product_name: productData.name,
-            quantity: qty,
-            price: productData.discounted_price
-              ? productData.discounted_price
-              : productData.price,
-            totalPrice: productData.discounted_price
-              ? productData.discounted_price * qty
-              : productData.price * qty,
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        if (response) {
-          setAddText("Added");
+        setAddText("Added");
+        const response = await AddToCart({
+          user_id: userData.id,
+          product_id: productData.id,
+          product_name: productData.name,
+          quantity: qty,
+          price: productData.discounted_price
+            ? productData.discounted_price
+            : productData.price,
+          totalPrice: productData.discounted_price
+            ? productData.discounted_price * qty
+            : productData.price * qty,
+        });
+        if (response.status === 200 || response.status === 201) {
+          console.log(response);
+          setTimeout(() => {
+            setAddText("Add to cart");
+          }, 2000);
+        } else {
+          toast.error("Something went wrong", {
+            position: "bottom-right", // You can change this to other positions
+          });
           console.log(response);
           setTimeout(() => {
             setAddText("Add to cart");
           }, 2000);
         }
       } catch (error) {
+        toast.error("Something went wrong", {
+          position: "bottom-right", // You can change this to other positions
+        });
         console.log(error);
+        setTimeout(() => {
+          setAddText("Add to cart");
+        }, 2000);
       }
     }
   };
@@ -140,21 +144,18 @@ const ProductView = ({ ui, school }) => {
     } else {
       try {
         if (givenReview !== "") {
-          const response = axios.post(
-            "http://127.0.0.1:8000/api/product/rate",
-            {
-              product_id: productData.id,
-              product_name: productData.name,
-              user_id: userData.id,
-              user_name: `${userData.first_name} ${
-                userData.last_name ? userData.last_name : ""
-              }`,
-              comment: givenReview,
-              rating: givenRating,
-            }
-          );
+          const response = await ReviewProduct({
+            product_id: productData.id,
+            product_name: productData.name,
+            user_id: userData.id,
+            user_name: `${userData.first_name} ${
+              userData.last_name ? userData.last_name : ""
+            }`,
+            comment: givenReview,
+            rating: givenRating,
+          });
 
-          if (response) {
+          if (response.status === 200) {
             setReviewClicked(false);
             setgivenRating(0);
             toast.success("Thank you for rating!");
@@ -175,26 +176,7 @@ const ProductView = ({ ui, school }) => {
   };
 
   //Reviewed date formatter
-  const formatDate = (timestamp) => {
-    const options = {
-      year: "numeric",
-      month: "long",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-    };
 
-    const formattedDate = new Date(timestamp).toLocaleDateString(
-      "en-US",
-      options
-    );
-    const formattedTime = new Date(timestamp).toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-
-    return formattedDate;
-  };
   return (
     <React.Fragment>
       <div className="main-screen-container">

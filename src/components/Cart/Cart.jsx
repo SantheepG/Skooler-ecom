@@ -1,20 +1,15 @@
 import React, { useState, useEffect } from "react";
 import "./Cart.css";
-import Navbar from "../Navbar/Navbar";
 import Footer from "../Footer";
-import { BsDashSquare, BsTrash3, BsPlusSquare } from "react-icons/bs";
 import CartRow from "./CartRow";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Navbar2 from "../Navbar/Navbar2";
+import { FetchCart } from "../../api/UserAPI";
 const Cart = ({ ui, school }) => {
   const navigate = useNavigate();
   const [cartItems, setCartItems] = useState([]);
-  const [itemData, setItemData] = useState([]);
-  //const [id, setid] = useState(userData.id);
   const [subtotal, setSubtotal] = useState(0);
-  const [totalCost, settotalCost] = useState(0);
-  const [voucher, setVoucher] = useState(0);
   const [dataChanged, setDataChanged] = useState(false);
   const [userData, setUserData] = useState({
     name: "",
@@ -39,9 +34,7 @@ const Cart = ({ ui, school }) => {
         if (!storedUserData) {
           navigate("/");
         } else {
-          const response = await axios.get(
-            `http://127.0.0.1:8000/api/cart/${storedUserData.id}`
-          );
+          const response = await FetchCart(storedUserData.id);
           if (response && response.data) {
             setCartItems(response.data.cart);
             setSubtotal(response.data.subtotal);
@@ -84,21 +77,10 @@ const Cart = ({ ui, school }) => {
     }
   };
 
-  const calculateSubTotal = () => {
-    const subt = cartItems.reduce(
-      (accumulator, item) => accumulator + parseFloat(item.totalPrice),
-      0
-    );
-    setSubtotal(subt.toFixed(2));
-  };
-
   const changeQty = (index, qty) => {
-    console.log("passed qty: ", qty);
-    console.log("in cart before change", cartItems[index].quantity);
     cartItems[index].quantity = qty;
     cartItems[index].totalPrice = (cartItems[index].price * qty).toFixed(2);
     setDataChanged(true);
-    console.log("in cart ", cartItems[index].quantity);
   };
 
   return (

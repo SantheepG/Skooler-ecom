@@ -1,9 +1,12 @@
 import axios from "axios";
-export const schoolID = "SC-24";
-export const base_URL = "http://127.0.0.1:8080/api";
+import { base_URL2 } from "../App";
+import { schoolID } from "../App";
+
 export const FetchSchool = async () => {
   try {
-    const response = await axios.get(`${base_URL}/super/getschool/${schoolID}`);
+    const response = await axios.get(
+      `${base_URL2}/super/getschool/${schoolID}`
+    );
     return response;
   } catch (error) {
     return error;

@@ -1,20 +1,7 @@
 import React, { useState } from "react";
-
+import { formatDate } from "../CommonFuncs";
 const EventRow = ({ event, previewEvent, editEvent, deleteEvent }) => {
   const [viewEditDropdown, setViewEditDropdown] = useState(false);
-
-  const formatDate = (dateString) => {
-    const options = {
-      hour: "2-digit",
-      minute: "2-digit",
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-    };
-
-    const formattedDate = new Date(dateString).toLocaleString("en-US", options);
-    return formattedDate;
-  };
 
   return (
     <React.Fragment>

@@ -13,6 +13,7 @@ import Carousel from "./Carousel";
 import { useNavigate } from "react-router-dom";
 import { setClicked } from "../../redux/action";
 import { useDispatch, useSelector } from "react-redux";
+import { FetchEvents } from "../../api/EventAPI";
 
 const Home = ({ school, ui }) => {
   const navigate = useNavigate();
@@ -28,7 +29,7 @@ const Home = ({ school, ui }) => {
     //
     const fetchEvents = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/events");
+        const response = await FetchEvents();
         //setEvents(response.data.events);
         setEvents(response.data.events);
         console.log(response);

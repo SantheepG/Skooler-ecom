@@ -8,28 +8,32 @@ import { useDispatch, useSelector } from "react-redux";
 import defaultImg from "../assets/default-avatar.png";
 import { BsSearch } from "react-icons/bs";
 import { PiShoppingCart } from "react-icons/pi";
-import Notifications from "./Notifications";
+import Notifications from "./Notifications/Notifications";
 import UserDropdown from "./UserDropdown";
 import hologoLogo from "../assets/Hologo_logo.png";
-import { base_URL } from "../../api/SchoolAPI";
+import { base_URL2 } from "../../App";
+import { base_URL } from "../../App";
 import "./SearchBar.scss";
-import SideNav from "./SideNav";
+import {
+  ChangeNotificationStatus,
+  FetchNotifications,
+} from "../../api/UserAPI";
+import { SearchResults } from "../../api/ProductAPI";
 const Navbar2 = ({ overlay, ui, school }) => {
-  const [colorPalette, setColorPalette] = useState({
-    primary: "blue",
-    border: "blue",
-  });
+  const [avatar, setAvatar] = useState("");
   const dispatch = useDispatch();
   const navBarstate = useSelector((state) => state.navbar);
-
   const [inputValue, setInputValue] = useState("");
   const [relatedSearch, setRelatedSearch] = useState([]);
   const navigate = useNavigate();
   const [searchBarClicked, setSearchBarClicked] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
   const [notificationsClicked, setNotificationsClicked] = useState(false);
+  const [reviewAlert, setReviewAlert] = useState([]);
+  const [complaintAlert, setComplaintAlert] = useState([]);
+  const [orderAlert, setOrderAlert] = useState([]);
+
   const [userClicked, setUserClicked] = useState(false);
-  const [toggleSideNav, setToggleSideNav] = useState(false);
   const [showNoResults, setShowNoResults] = useState(false);
   const [viewResults, setViewResults] = useState(false);
   const [newNotification, setNewNoticiation] = useState(false);
@@ -77,17 +81,10 @@ const Navbar2 = ({ overlay, ui, school }) => {
       try {
         setRelatedSearch([]);
         if (inputValue !== "") {
-          const response = await axios.post(
-            "http://127.0.0.1:8000/api/search",
-            {
-              searchTerm: inputValue,
-            },
-            {
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          );
+          const response = await SearchResults({
+            searchTerm: inputValue,
+          });
+
           if (response.status === 200) {
             setRelatedSearch(response.data);
           }
@@ -106,8 +103,40 @@ const Navbar2 = ({ overlay, ui, school }) => {
     if (storedUserData) {
       setUserData(storedUserData);
       setLoggedIn(true);
+      setAvatar(`${base_URL}/user/avatar/get/${storedUserData.id}`);
     }
+
+    const fetchAlerts = async () => {
+      if (storedUserData) {
+        const response = await FetchNotifications(storedUserData.id);
+        if (response.status === 200) {
+          console.log(response.data);
+          setReviewAlert(response.data.reviewAlerts);
+          setComplaintAlert(response.data.complaintAlerts);
+          setOrderAlert(response.data.orderAlerts);
+        } else {
+          console.log(response.data);
+        }
+      }
+    };
+    fetchAlerts();
   }, []);
+
+  useEffect(() => {
+    if (
+      (reviewAlert && reviewAlert.length > 0) ||
+      (complaintAlert && complaintAlert.length > 0) ||
+      (orderAlert && orderAlert.length > 0)
+    ) {
+      const hasUnreadItem1 = reviewAlert.some((item) => item.is_read === 0);
+      const hasUnreadItem2 = orderAlert.some((item) => item.is_read === 0);
+      const hasUnreadItem3 = complaintAlert.some((item) => item.is_read === 0);
+
+      if (hasUnreadItem1 || hasUnreadItem2 || hasUnreadItem3) {
+        setNewNoticiation(true);
+      }
+    }
+  }, [reviewAlert, complaintAlert, orderAlert]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -116,6 +145,16 @@ const Navbar2 = ({ overlay, ui, school }) => {
 
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    const changeAlertStatus = async () => {
+      const response = await ChangeNotificationStatus(userData.id);
+      if (response.status === "200") {
+        console.log(response.data);
+      }
+    };
+    changeAlertStatus();
+  }, [notificationsClicked]);
 
   const handleItemClick = (item) => {
     if (!navBarstate[item]) {
@@ -166,7 +205,7 @@ const Navbar2 = ({ overlay, ui, school }) => {
         <div className="flex">
           <div className="w-12 h-12">
             <img
-              src={`${base_URL}/super/getlogo/${school.logo_id}`}
+              src={`${base_URL2}/super/getlogo/${school.logo_id}`}
               alt="School logo"
               className="max-w-100"
             />
@@ -235,7 +274,7 @@ const Navbar2 = ({ overlay, ui, school }) => {
                         <div className="ul-title">
                           <p>Related events</p>
                         </div>
-                        {relatedSearch.event_result.map((event) => (
+                        {relatedSearch.event_results.map((event) => (
                           <div
                             className="li cursor-pointer"
                             key={event.id}
@@ -316,7 +355,7 @@ const Navbar2 = ({ overlay, ui, school }) => {
                         <div className="ul-title">
                           <p>Related events</p>
                         </div>
-                        {relatedSearch.event_result.map((event) => (
+                        {relatedSearch.event_results.map((event) => (
                           <div
                             className="li cursor-pointer"
                             key={event.id}
@@ -430,6 +469,7 @@ const Navbar2 = ({ overlay, ui, school }) => {
                     class="p-2 mr-1 text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
                     onClick={() => {
                       setNotificationsClicked(!notificationsClicked);
+                      setNewNoticiation(false);
                       setUserClicked(false);
                     }}
                   >
@@ -444,15 +484,18 @@ const Navbar2 = ({ overlay, ui, school }) => {
                       <path d="M12.133 10.632v-1.8A5.406 5.406 0 0 0 7.979 3.57.946.946 0 0 0 8 3.464V1.1a1 1 0 0 0-2 0v2.364a.946.946 0 0 0 .021.106 5.406 5.406 0 0 0-4.154 5.262v1.8C1.867 13.018 0 13.614 0 14.807 0 15.4 0 16 .538 16h12.924C14 16 14 15.4 14 14.807c0-1.193-1.867-1.789-1.867-4.175ZM3.823 17a3.453 3.453 0 0 0 6.354 0H3.823Z" />
                     </svg>
                     {newNotification && (
-                      <div class="absolute mx-1.5 my-0.5 h-1.5 w-1.5 rounded-full bg-orange-400 me-2"></div>
+                      <div class="absolute mx-1.5 my-0.5 h-1.5 w-2 rounded-full bg-orange-400 me-2"></div>
                     )}
                   </button>
                   <div
-                    className={`top-32 mt-2 right-0 mr-12 ${
-                      notificationsClicked ? "fixed z-10" : "hidden"
-                    }`}
+                    className={`top-20 right-0 mr-12 ${
+                      notificationsClicked ? "fixed z-10 " : "hidden"
+                    } ${isSticky ? "" : "mt-14"}`}
                   >
                     <Notifications
+                      reviewAlert={reviewAlert}
+                      orderAlert={orderAlert}
+                      complaintAlert={complaintAlert}
                       close={() =>
                         setNotificationsClicked(!notificationsClicked)
                       }
@@ -472,15 +515,15 @@ const Navbar2 = ({ overlay, ui, school }) => {
                     <span class="sr-only">Open user menu</span>
                     <img
                       class="w-7 h-7 mt-1 rounded-full"
-                      src={defaultImg}
+                      src={avatar}
                       alt="user photo"
                     />
                   </button>
                   {userClicked && (
                     <div
                       className={` ${
-                        userClicked ? "fixed mt-12 z-10" : "hidden"
-                      }`}
+                        userClicked ? "fixed z-10 mt-14" : "hidden"
+                      } `}
                     >
                       <UserDropdown userData={userData} />
                     </div>
@@ -489,7 +532,7 @@ const Navbar2 = ({ overlay, ui, school }) => {
               ) : (
                 <li>
                   <button
-                    className={`rounded-full border-2 border-${ui.secondary_clr} px-6 py-1 text-${ui.secondary_clr} transition-colors hover:bg-${ui.primary_clr} hover:text-white`}
+                    className={`rounded-full border-2 border-${ui.secondary_clr} px-6 py-1 text-${ui.secondary_clr} transition-colors hover:border-${ui.primary_clr} `}
                     onClick={() => {
                       handleEventClick("loginClicked");
                     }}

@@ -1,23 +1,15 @@
 import React, { useEffect, useState } from "react";
 import "./Complaints.css";
-import { fetchComplaints } from "../../../api/UserAPI";
-import {
-  BsDashSquare,
-  BsTrash3,
-  BsPlusSquare,
-  BsTrash3Fill,
-  BsTrashFill,
-} from "react-icons/bs";
-import { PiSortAscendingBold } from "react-icons/pi";
+import { FetchComplaints } from "../../../api/UserAPI";
+
 import ComplaintRow from "./ComplaintRow";
 const Complaints = ({ user }) => {
-  const [showSortDropdown, setShowSortDropdown] = useState(false);
   const [complaints, setComplaints] = useState([]);
 
   useEffect(() => {
     const fetchUserComplaints = async () => {
       if (user !== null) {
-        let response = await fetchComplaints(user.id);
+        let response = await FetchComplaints(user.id);
         if (response) {
           setComplaints(response.data.complaints);
         } else {

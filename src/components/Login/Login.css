@@ -79,10 +79,9 @@ body {
 	text-align: center;
 }
 
-.pswd-container{
+.slideAnim{
 	animation: slideInFromRight 0.2s ease forwards;
 	
-	width: 100%;
 }
 
 

@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import "./Events.css";
-import Navbar from "../Navbar/Navbar";
 import Footer from "../Footer";
 import { PiSortAscendingBold } from "react-icons/pi";
-import axios from "axios";
 import EventRow from "./EventRow";
 import EventPreview from "./EventPreview";
 import Navbar2 from "../Navbar/Navbar2";
+import { FetchEvents } from "../../api/EventAPI";
 const Events = ({ ui, school }) => {
   const [showSortDropdown, setShowSortDropdown] = useState(false);
   const [events, setEvents] = useState([]);
@@ -21,7 +20,7 @@ const Events = ({ ui, school }) => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/events");
+        const response = await FetchEvents();
         if (response && response.data) {
           setEvents(response.data.events);
         }

@@ -1,16 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useStore } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setClicked } from "../../redux/action";
 const CartRow = ({ product, qtyUpdate, deleteItem, subtotal }) => {
   const [qty, setQty] = useState(1);
-  const [tprice, setTPrice] = useState(product.price);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [addText, setAddText] = useState("Add to cart");
-  const [avgRating, setavgRating] = useState(0);
   const navBarstate = useSelector((state) => state.navbar);
 
   useEffect(() => {

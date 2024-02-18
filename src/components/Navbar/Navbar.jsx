@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import defaultImg from "../assets/default-avatar.png";
 import { BsSearch } from "react-icons/bs";
 import { PiShoppingCart } from "react-icons/pi";
-import Notifications from "./Notifications";
+import Notifications from "./Notifications/Notifications";
 import UserDropdown from "./UserDropdown";
 import "./SearchBar.scss";
 import SideNav from "./SideNav";

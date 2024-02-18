@@ -6,6 +6,7 @@ import Navbar from "../Navbar/Navbar";
 import { Toaster, toast } from "react-hot-toast";
 import Footer from "../Footer";
 import Navbar2 from "../Navbar/Navbar2";
+import { GetEvent } from "../../api/EventAPI";
 const EventView = ({ ui, school }) => {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -32,17 +33,17 @@ const EventView = ({ ui, school }) => {
 
   useEffect(() => {
     const fetchEventData = async () => {
-      try {
-        const response = await axios.get(
-          `http://127.0.0.1:8000/api/events/${id}`
-        );
-        if (response) {
-          setEvent(response.data.event);
-        } else {
-          console.error(response);
+      if (id !== undefined) {
+        try {
+          const response = await GetEvent(id);
+          if (response.status === 200) {
+            setEvent(response.data.event);
+          } else {
+            console.error(response);
+          }
+        } catch (error) {
+          console.log("Error:", error);
         }
-      } catch (error) {
-        console.log("Error:", error);
       }
     };
 

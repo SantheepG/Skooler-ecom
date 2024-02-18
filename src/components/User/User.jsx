@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { FetchUser } from "../../api/UserAPI";
-import axios from "axios";
+import { FetchUser } from "../../api/AuthAPI";
 import { useNavigate } from "react-router-dom";
 import "./User.css";
 import Sidebar from "./Sidebar/Sidebar";
 import { useSelector, useDispatch } from "react-redux";
-import { setClicked } from "../../redux/action";
 import Profile from "./Profile/Profile";
 import Orders from "./Orders/Orders";
 import PaymentSettings from "./PaymentSettings/PaymentSettings";
@@ -19,10 +17,8 @@ import Navbar from "../Navbar/Navbar";
 import Footer from "../Footer";
 import Navbar2 from "../Navbar/Navbar2";
 const User = ({ ui, school }) => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [reloadCom, setReloadComp] = useState(false);
-  const [showDropdown, setShowDropdown] = useState(false);
   const [userData, setUserData] = useState(null);
   const [overlayClicked, setOverlayClicked] = useState(false);
 
@@ -34,8 +30,8 @@ const User = ({ ui, school }) => {
           const response = await FetchUser();
           if (response.status === 200) {
             console.log(response);
-            localStorage.setItem("user", JSON.stringify(response.data));
-            setUserData(response.data);
+            //localStorage.setItem("user", JSON.stringify(response.data));
+            setUserData(response.data.user);
             setReloadComp(false);
           } else {
           }

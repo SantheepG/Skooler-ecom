@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setClicked } from "../../redux/action";
-
+import { AddToCart } from "../../api/UserAPI";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const ProductCard2 = ({ productData }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [addText, setAddText] = useState("Add to cart");
-  const [avgRating, setavgRating] = useState(0);
   const navBarstate = useSelector((state) => state.navbar);
   const [loggedIn, setLoggedIn] = useState(false);
   const [userData, setUserData] = useState({
@@ -46,35 +46,37 @@ const ProductCard2 = ({ productData }) => {
       dispatch(setClicked("loginClicked", true));
     } else {
       try {
-        const response = axios.post(
-          "http://127.0.0.1:8000/api/cart/add",
-          {
-            user_id: userData.id,
-            product_id: productData.id,
-            product_name: productData.name,
-            quantity: 1,
-            price: productData.discounted_price
-              ? productData.discounted_price
-              : productData.price,
-            totalPrice: productData.discounted_price
-              ? productData.discounted_price
-              : productData.price,
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        if (response) {
-          setAddText("Added");
+        setAddText("Added");
+        const response = await AddToCart({
+          user_id: userData.id,
+          product_id: productData.id,
+          product_name: productData.name,
+          quantity: 1,
+          price: productData.discounted_price
+            ? productData.discounted_price
+            : productData.price,
+          totalPrice: productData.discounted_price
+            ? productData.discounted_price
+            : productData.price,
+        });
+        if (response.status === 200 || response.status === 201) {
+          setTimeout(() => {
+            setAddText("Add to cart");
+          }, 2000);
           console.log(response);
+        } else {
+          toast.error("Something went wrong", {
+            position: "bottom-right", // You can change this to other positions
+          });
           setTimeout(() => {
             setAddText("Add to cart");
           }, 2000);
         }
       } catch (error) {
         console.log(error);
+        setTimeout(() => {
+          setAddText("Add to cart");
+        }, 2000);
       }
     }
   };
@@ -82,6 +84,7 @@ const ProductCard2 = ({ productData }) => {
   return (
     <React.Fragment>
       <div class="relative flex max-w-xs flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-md">
+        <ToastContainer />
         <a
           class="relative mx-5 mt-3 flex h-60 overflow-hidden rounded-xl"
           href="#"

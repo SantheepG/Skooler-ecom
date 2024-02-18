@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-
 import { PiSortAscendingBold } from "react-icons/pi";
 import { Toaster, toast } from "react-hot-toast";
-import { fetchOrders } from "../../../api/UserAPI";
+import { FetchOrders } from "../../../api/UserAPI";
 import OrderRow from "./OrderRow";
 import InvoiceView from "./InvoiceView";
 import BookingRow from "./BookingRow";
@@ -26,7 +25,7 @@ const Orders = ({ userData, overlay }) => {
     const fetchData = async () => {
       if (userData !== null) {
         try {
-          const response = await fetchOrders(userData.id);
+          const response = await FetchOrders(userData.id);
           console.group(response);
           setOrders(response.data.orders);
           setBookings(response.data.bookings);
