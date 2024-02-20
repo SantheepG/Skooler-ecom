@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setClicked } from "../../redux/action";
+import { QtyChange } from "../../api/UserAPI";
 const CartRow = ({ product, qtyUpdate, deleteItem, subtotal }) => {
   const [qty, setQty] = useState(1);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [viewStockAlert, setViewStockAlert] = useState(false);
   const navBarstate = useSelector((state) => state.navbar);
 
   useEffect(() => {
@@ -23,10 +24,8 @@ const CartRow = ({ product, qtyUpdate, deleteItem, subtotal }) => {
         setQty(newQty);
         qtyUpdate(newQty);
         console.log(qty);
-        const response = await axios.put(
-          `http://127.0.0.1:8000/api/updatecart/${product.id}/${newQty}/${product.price}`
-        );
-        if (response) {
+        const response = await QtyChange(product.id, newQty, product.price);
+        if (response.status === 200) {
           console.log("qty changed");
           subtotal(parseFloat(response.data.subtotal));
           //qtyUpdate(qty);
@@ -44,23 +43,25 @@ const CartRow = ({ product, qtyUpdate, deleteItem, subtotal }) => {
 
   const handleIncrease = async () => {
     try {
-      console.log(qty);
-      let newQty = qty + 1;
-      setQty(newQty);
-      qtyUpdate(newQty);
-      console.log(qty);
-
-      const response = await axios.put(
-        `http://127.0.0.1:8000/api/updatecart/${product.id}/${newQty}/${product.price}`
-      );
-      if (response) {
-        console.log("qty changed");
-        subtotal(response.data.subtotal);
+      if (qty + 1 <= product.stock) {
+        let newQty = qty + 1;
+        setQty(newQty);
+        qtyUpdate(newQty);
+        const response = await QtyChange(product.id, newQty, product.price);
+        if (response.status === 200) {
+          console.log("qty changed");
+          subtotal(response.data.subtotal);
+        } else {
+          console.log("something went wrong");
+          let oldQty = qty - 1;
+          setQty(oldQty);
+          qtyUpdate(oldQty);
+        }
       } else {
-        console.log("something went wrong");
-        let oldQty = qty - 1;
-        setQty(oldQty);
-        qtyUpdate(oldQty);
+        setViewStockAlert(true);
+        setTimeout(() => {
+          setViewStockAlert(false);
+        }, 2500);
       }
     } catch (error) {
       console.log("Error: ", error);
@@ -101,6 +102,11 @@ const CartRow = ({ product, qtyUpdate, deleteItem, subtotal }) => {
               <span className="currency-symbol"></span>
               {product.price}
             </p>
+            {viewStockAlert && (
+              <div className="mt-4 text-red-600 ViewContent">
+                Only {product.stock} available
+              </div>
+            )}
           </div>
           <div class="mt-4 flex justify-between sm:space-y-6 sm:mt-0 sm:block sm:space-x-6">
             <div class="flex items-center border-gray-100">

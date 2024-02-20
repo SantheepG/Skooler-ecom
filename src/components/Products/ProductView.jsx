@@ -99,32 +99,38 @@ const ProductView = ({ ui, school }) => {
       navigate("/login");
     } else {
       try {
-        setAddText("Added");
-        const response = await AddToCart({
-          user_id: userData.id,
-          product_id: productData.id,
-          product_name: productData.name,
-          quantity: qty,
-          price: productData.discounted_price
-            ? productData.discounted_price
-            : productData.price,
-          totalPrice: productData.discounted_price
-            ? productData.discounted_price * qty
-            : productData.price * qty,
-        });
-        if (response.status === 200 || response.status === 201) {
-          console.log(response);
-          setTimeout(() => {
-            setAddText("Add to cart");
-          }, 2000);
-        } else {
-          toast.error("Something went wrong", {
-            position: "bottom-right", // You can change this to other positions
+        if (qty <= productData.stock) {
+          setAddText("Added");
+          const response = await AddToCart({
+            user_id: userData.id,
+            product_id: productData.id,
+            product_name: productData.name,
+            quantity: qty,
+            price: productData.discounted_price
+              ? productData.discounted_price
+              : productData.price,
+            totalPrice: productData.discounted_price
+              ? productData.discounted_price * qty
+              : productData.price * qty,
           });
-          console.log(response);
-          setTimeout(() => {
-            setAddText("Add to cart");
-          }, 2000);
+          if (response.status === 200 || response.status === 201) {
+            console.log(response);
+            setTimeout(() => {
+              setAddText("Add to cart");
+            }, 2000);
+          } else {
+            toast.error("Something went wrong", {
+              position: "bottom-right", // You can change this to other positions
+            });
+            console.log(response);
+            setTimeout(() => {
+              setAddText("Add to cart");
+            }, 2000);
+          }
+        } else {
+          toast.error(`Only ${productData.stock} available in stock`, {
+            position: "bottom-center", // You can change this to other positions
+          });
         }
       } catch (error) {
         toast.error("Something went wrong", {
@@ -377,6 +383,7 @@ const ProductView = ({ ui, school }) => {
                           name="qty"
                           id="qty"
                           min={1}
+                          max={productData.stock}
                           value={qty}
                           className="bg-gray-50 mt-4 w-24 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                           onChange={(e) => setQty(parseInt(e.target.value))}

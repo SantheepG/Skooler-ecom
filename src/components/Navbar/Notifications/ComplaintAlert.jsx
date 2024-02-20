@@ -1,7 +1,8 @@
 import React from "react";
 import defaultImg from "../../assets/Hologo_logo.png";
+import { formatDate, calculateElapsedTime } from "../../CommonFuncs";
 
-const ComplaintAlert = () => {
+const ComplaintAlert = ({ alert }) => {
   return (
     <React.Fragment>
       <a
@@ -29,15 +30,14 @@ const ComplaintAlert = () => {
         <div class="pl-3 w-full">
           <div class="text-gray-500 font-normal text-sm mb-1.5 dark:text-gray-400">
             <span class="font-semibold text-gray-900 dark:text-white">
-              Complaint ID - 3344 :
+              {alert.name}
             </span>{" "}
-            Your complainted has been recorded:{" "}
-            <span class="font-medium text-primary-700 dark:text-primary-500">
-              We will get back to you shortly
-            </span>{" "}
+            {alert.info}
+            <span class="font-medium text-primary-700 dark:text-primary-500"></span>{" "}
           </div>
           <div class="text-xs font-medium text-primary-700 dark:text-primary-400">
-            1 hour ago
+            {alert.event_datetime !== null &&
+              calculateElapsedTime(alert.created_at)}
           </div>
         </div>
       </a>

@@ -37,7 +37,7 @@ const ReportView = ({ user, order, closeModal }) => {
           qty: complaintProduct.qty,
           type: complaintType,
           description: complaintDesc,
-          status: "pending",
+          status: "Pending",
           images: complaintImgs,
         };
         const response = await LodgeAComplaint(data);

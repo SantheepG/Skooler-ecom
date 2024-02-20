@@ -92,7 +92,7 @@ const ComplaintRow = ({ complaint }) => {
           </td>
 
           <td class="whitespace-no-wrap py-4 text-sm font-normal text-gray-500 sm:px-3 lg:table-cell">
-            {complaint.status === "resolved" ? (
+            {complaint.status === "Resolved" ? (
               <span class="whitespace-nowrap rounded-full bg-green-100 px-2 py-0.5 text-green-800">
                 {complaint.status}
               </span>

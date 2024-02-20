@@ -31,7 +31,7 @@ const User = ({ ui, school }) => {
           if (response.status === 200) {
             console.log(response);
             //localStorage.setItem("user", JSON.stringify(response.data));
-            setUserData(response.data.user);
+            setUserData(response.data);
             setReloadComp(false);
           } else {
           }

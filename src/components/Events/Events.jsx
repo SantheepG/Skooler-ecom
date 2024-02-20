@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./Events.css";
 import Footer from "../Footer";
+import Loading from "../Loading/Loading";
 import { PiSortAscendingBold } from "react-icons/pi";
 import EventRow from "./EventRow";
 import EventPreview from "./EventPreview";
@@ -138,9 +139,12 @@ const Events = ({ ui, school }) => {
                       />
                     ))
                   ) : (
-                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                      No events available
-                    </tr>
+                    <section
+                      id="Projects"
+                      class="w-fit mx-auto grid grid-cols-1 lg:grid-cols-4 md:grid-cols-2 justify-items-center justify-center gap-y-5 gap-x-5 mt-10 mb-5"
+                    >
+                      <Loading />
+                    </section>
                   )}
                 </div>
               </div>

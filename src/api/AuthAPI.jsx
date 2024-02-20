@@ -49,7 +49,7 @@ export const FetchUser = async () => {
     let tkn = localStorage.getItem("token");
     const response = await axios.get(`${base_URL}/user`, {
       headers: {
-        Authorization: `Bearer ${tkn} `,
+        Authorization: `Bearer ${tkn}`,
       },
     });
     console.log(response);

@@ -55,17 +55,18 @@ export const FetchUser = async () => {
     return error;
   }
 };
-export const FetchCart = async (id) => {
+export const FetchCart = async (userId) => {
   try {
-    const response = await axios.get(`${base_URL}/cart/${id}`);
+    const response = await axios.get(`${base_URL}/cart/${userId}`);
+    console.log(response);
     return response;
   } catch (error) {
     return error;
   }
 };
-export const FetchOrders = async (id) => {
+export const FetchOrders = async (userId) => {
   try {
-    const response = await axios.get(`${base_URL}/user/orders/${id}`);
+    const response = await axios.get(`${base_URL}/user/orders/${userId}`);
     return response;
   } catch (error) {
     console.error(error);
@@ -91,19 +92,28 @@ export const LodgeAComplaint = async (data) => {
     console.error(error);
   }
 };
-
-export const FetchComplaints = async (id) => {
+export const QtyChange = async (productId, qty, price) => {
   try {
-    const response = await axios.get(`${base_URL}/user/complaints/${id}`);
+    const response = await axios.put(
+      `${base_URL}/updatecart/${productId}/${qty}/${price}`
+    );
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
+export const FetchComplaints = async (userId) => {
+  try {
+    const response = await axios.get(`${base_URL}/user/complaints/${userId}`);
     return response;
   } catch (error) {
     console.error(error.message);
   }
 };
 
-export const fetchReviews = async (id) => {
+export const fetchReviews = async (userId) => {
   try {
-    const response = await axios.get(`${base_URL}/user/reviews/${id}`);
+    const response = await axios.get(`${base_URL}/user/reviews/${userId}`);
     if (response) {
       return response;
     } else {
@@ -113,10 +123,10 @@ export const fetchReviews = async (id) => {
     console.error(error.message);
   }
 };
-export const FetchNotifications = async (id) => {
+export const FetchNotifications = async (userId) => {
   try {
     const response = await axios.get(
-      `${base_URL}/user/notifications/fetch/${id}`
+      `${base_URL}/user/notifications/fetch/${userId}`
     );
 
     return response;
@@ -198,9 +208,9 @@ export const AddCard = async (data) => {
   }
 };
 
-export const FetchCards = async (id) => {
+export const FetchCards = async (userId) => {
   try {
-    const response = await axios.get(`${base_URL}/user/card/${id}`);
+    const response = await axios.get(`${base_URL}/user/card/${userId}`);
 
     return response;
   } catch (error) {
