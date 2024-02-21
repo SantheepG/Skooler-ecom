@@ -79,7 +79,11 @@ const EventRow = ({ event, previewEvent, editEvent, deleteEvent }) => {
                 </span>
               )}
               {event.payment_deadline !== null ? (
-                <div>Closing date : {event.payment_deadline}</div>
+                <div class="rounded-full border border-blue-300 b-2 px-2 py-0.5 text-green-700">
+                  Closing :{" "}
+                  {event.event_datetime !== null &&
+                    formatDate(event.payment_deadline)}
+                </div>
               ) : null}
 
               <div></div>

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import "./Notifications.css";
 import ReviewAlert from "./ReviewAlert";
-import OrderAlert from "./ReviewAlert";
+import OrderAlert from "./OrderAlert";
 import ComplaintAlert from "./ComplaintAlert";
 
-const Notifications = ({ reviewAlert, orderAlert, complaintAlert, close }) => {
+const Notifications = ({ alerts, close }) => {
   return (
     <React.Fragment>
       <div
@@ -16,33 +16,37 @@ const Notifications = ({ reviewAlert, orderAlert, complaintAlert, close }) => {
           Notifications
         </div>
         <div class="h-80 overflow-y-auto">
-          {reviewAlert.length !== 0 &&
-            reviewAlert.map((alert) => (
-              <ReviewAlert key={alert.id} alert={alert} />
-            ))}
-          {orderAlert.length !== 0 &&
-            orderAlert.map((alert) => (
-              <OrderAlert key={alert.id} alert={alert} />
-            ))}
-          {complaintAlert.length !== 0 &&
-            complaintAlert.map((alert) => (
-              <ComplaintAlert key={alert.id} alert={alert} />
-            ))}
-          {reviewAlert.length === 0 &&
-            orderAlert === 0 &&
-            complaintAlert ===
-              0(
-                <a
-                  href="#"
-                  class="flex py-3 px-32 border-b hover:bg-gray-100 dark:hover:bg-gray-600 dark:border-gray-600"
-                >
-                  <div class="pl-3 w-full">
-                    <div class="text-gray-500 font-normal text-sm mb-1.5 dark:text-gray-400">
-                      Nothing available
-                    </div>
-                  </div>
-                </a>
-              )}
+          {alerts &&
+            alerts.length !== 0 &&
+            alerts.map((alert) => {
+              console.log("Current alert type:", alert.type, alert.id);
+              switch (alert.type) {
+                case "review":
+                  return <ReviewAlert key={alert.id} alert={alert} />;
+
+                case "complaint":
+                  return <ComplaintAlert key={alert.id} alert={alert} />;
+
+                case "order":
+                  return <OrderAlert key={alert.id} alert={alert} />;
+
+                default:
+                  return null;
+              }
+            })}
+
+          {alerts.length === 0 && (
+            <a
+              href="#"
+              class="flex py-3 px-32 border-b hover:bg-gray-100 dark:hover:bg-gray-600 dark:border-gray-600"
+            >
+              <div class="pl-3 w-full">
+                <div class="text-gray-500 font-normal text-sm mb-1.5 dark:text-gray-400">
+                  Nothing available
+                </div>
+              </div>
+            </a>
+          )}
         </div>
         <a
           href="#"

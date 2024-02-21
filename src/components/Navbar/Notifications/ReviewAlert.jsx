@@ -37,7 +37,7 @@ const ReviewAlert = ({ alert }) => {
             </span>{" "}
           </div>
           <div class="text-xs font-medium text-primary-700 dark:text-primary-400">
-            {alert.event_datetime !== null &&
+            {alert.created_at !== null &&
               calculateElapsedTime(alert.created_at)}
           </div>
         </div>

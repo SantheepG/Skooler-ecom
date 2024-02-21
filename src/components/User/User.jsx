@@ -26,16 +26,21 @@ const User = ({ ui, school }) => {
     const fetchUserData = async () => {
       try {
         let tkn = localStorage.getItem("token");
-        if (tkn) {
-          const response = await FetchUser();
-          if (response.status === 200) {
-            console.log(response);
-            //localStorage.setItem("user", JSON.stringify(response.data));
-            setUserData(response.data);
-            setReloadComp(false);
-          } else {
-          }
-        } else {
+        let user = JSON.parse(localStorage.getItem("user"));
+        if (user) {
+          setUserData(user);
+        }
+
+        //if (tkn) {
+        //  const response = await FetchUser();
+        //  if (response.status === 200) {
+        //    console.log(response);
+        //localStorage.setItem("user", JSON.stringify(response.data));
+        //    setUserData(response.data);
+        //    setReloadComp(false);
+        //  } else {
+        //  }
+        else {
           localStorage.clear();
           navigate("/");
         }

@@ -33,6 +33,7 @@ const Navbar2 = ({ overlay, ui, school }) => {
   const [complaintAlert, setComplaintAlert] = useState([]);
   const [orderAlert, setOrderAlert] = useState([]);
 
+  const [alerts, setAlerts] = useState([]);
   const [userClicked, setUserClicked] = useState(false);
   const [showNoResults, setShowNoResults] = useState(false);
   const [viewResults, setViewResults] = useState(false);
@@ -111,9 +112,10 @@ const Navbar2 = ({ overlay, ui, school }) => {
         const response = await FetchNotifications(storedUserData.id);
         if (response.status === 200) {
           console.log(response.data);
-          setReviewAlert(response.data.reviewAlerts);
-          setComplaintAlert(response.data.complaintAlerts);
-          setOrderAlert(response.data.orderAlerts);
+          setAlerts(response.data.alerts.slice().reverse());
+          //setReviewAlert(response.data.reviewAlerts);
+          //setComplaintAlert(response.data.complaintAlerts);
+          //setOrderAlert(response.data.orderAlerts);
         } else {
           console.log(response.data);
         }
@@ -123,20 +125,14 @@ const Navbar2 = ({ overlay, ui, school }) => {
   }, []);
 
   useEffect(() => {
-    if (
-      (reviewAlert && reviewAlert.length > 0) ||
-      (complaintAlert && complaintAlert.length > 0) ||
-      (orderAlert && orderAlert.length > 0)
-    ) {
-      const hasUnreadItem1 = reviewAlert.some((item) => item.is_read === 0);
-      const hasUnreadItem2 = orderAlert.some((item) => item.is_read === 0);
-      const hasUnreadItem3 = complaintAlert.some((item) => item.is_read === 0);
+    if (alerts && alerts.length > 0) {
+      const hasUnreadItem = alerts.some((item) => item.is_read === 0);
 
-      if (hasUnreadItem1 || hasUnreadItem2 || hasUnreadItem3) {
+      if (hasUnreadItem) {
         setNewNoticiation(true);
       }
     }
-  }, [reviewAlert, complaintAlert, orderAlert]);
+  }, [alerts]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -493,9 +489,7 @@ const Navbar2 = ({ overlay, ui, school }) => {
                     } ${isSticky ? "" : "mt-14"}`}
                   >
                     <Notifications
-                      reviewAlert={reviewAlert}
-                      orderAlert={orderAlert}
-                      complaintAlert={complaintAlert}
+                      alerts={alerts}
                       close={() =>
                         setNotificationsClicked(!notificationsClicked)
                       }

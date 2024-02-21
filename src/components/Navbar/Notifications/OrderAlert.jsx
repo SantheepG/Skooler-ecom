@@ -1,7 +1,7 @@
 import React from "react";
 import defaultImg from "../../assets/Hologo_logo.png";
-
-const OrderAlert = () => {
+import { formatDate, calculateElapsedTime } from "../../CommonFuncs";
+const OrderAlert = ({ alert }) => {
   return (
     <React.Fragment>
       <a
@@ -29,18 +29,17 @@ const OrderAlert = () => {
         <div class="pl-3 w-full">
           <div class="text-gray-500 font-normal text-sm mb-1.5 dark:text-gray-400">
             <span class="font-semibold text-gray-900 dark:text-white">
-              Order ID - 1234
+              {alert.name}
             </span>{" "}
-            has been dispatched.{" "}
+            :{" "}
             <span class="font-medium text-gray-900 dark:text-white">
-              You may recieve your order by tommorrow.
+              {alert.info}
             </span>{" "}
-            <a href="" className="text-blue-500">
-              Track your order
-            </a>
+            <a href="" className="text-blue-500"></a>
           </div>
           <div class="text-xs font-medium text-primary-700 dark:text-primary-400">
-            10 minutes ago
+            {alert.created_at !== null &&
+              calculateElapsedTime(alert.created_at)}
           </div>
         </div>
       </a>
